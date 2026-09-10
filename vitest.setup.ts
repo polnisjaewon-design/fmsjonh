@@ -16,3 +16,19 @@ if (!w.ResizeObserver) {
   w.ResizeObserver = class { observe() {} unobserve() {} disconnect() {} } as unknown as typeof ResizeObserver;
 }
 if (!Element.prototype.scrollIntoView) Element.prototype.scrollIntoView = () => {};
+if (!Element.prototype.hasPointerCapture) Element.prototype.hasPointerCapture = () => false;
+if (!Element.prototype.setPointerCapture) Element.prototype.setPointerCapture = () => {};
+if (!Element.prototype.releasePointerCapture) Element.prototype.releasePointerCapture = () => {};
+
+if (!window.PointerEvent) {
+  class MockPointerEvent extends MouseEvent {
+    pointerType = "mouse";
+    constructor(type: string, params: MouseEventInit = {}) {
+      super(type, params);
+    }
+  }
+  // @ts-expect-error polyfill
+  window.PointerEvent = MockPointerEvent;
+}
+
+

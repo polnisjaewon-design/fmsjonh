@@ -1,6 +1,28 @@
-import { LayoutDashboard, Users, Settings, Layers, type LucideIcon } from "lucide-react";
+import {
+  LayoutDashboard,
+  Users,
+  Settings,
+  Layers,
+  Newspaper,
+  ExternalLink,
+  UserCheck,
+  BookOpen,
+  GraduationCap,
+  FileCheck,
+  Calendar,
+  BookMarked,
+  type LucideIcon,
+} from "lucide-react";
 import { hasPermission, P } from "@/features/identity";
 import { SAMPLE_P } from "@/features/sample";
+import { NEWS_P } from "@/features/news/permissions";
+import { ADMISSION_P } from "@/features/admission/permissions";
+import { STUDENT_P } from "@/features/student/permissions";
+import { CURRICULUM_P } from "@/features/curriculum/permissions";
+import { FACULTY_P } from "@/features/faculty/permissions";
+import { PETITION_P } from "@/features/petition/permissions";
+import { SCHEDULE_P } from "@/features/schedule/permissions";
+import { THESIS_P } from "@/features/thesis/permissions";
 
 export interface NavItem {
   /** i18n key */
@@ -15,7 +37,24 @@ export interface NavGroup { label: string; items: NavItem[] }
 export interface NavCrumb { title: string; href: string }
 
 export const sidebarGroups: NavGroup[] = [
-  { label: "nav.group.overview", items: [{ title: "nav.dashboard", href: "/dashboard", icon: LayoutDashboard }] },
+  { label: "nav.group.overview", items: [
+    { title: "nav.dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { title: "news.title", href: "/", icon: ExternalLink },
+  ] },
+  {
+    label: "roles.module.curriculum",
+    items: [
+      { title: "news.adminTitle", href: "/news-management", icon: Newspaper, permission: NEWS_P.newsRead },
+      { title: "admission.adminTitle", href: "/admission-management", icon: UserCheck, permission: ADMISSION_P.admissionRead },
+      { title: "student.adminTitle", href: "/student-management", icon: Users, permission: STUDENT_P.studentRead },
+      { title: "curriculum.adminTitle", href: "/curriculum-management", icon: BookOpen, permission: CURRICULUM_P.curriculumRead },
+      { title: "faculty.adminTitle", href: "/faculty-management", icon: GraduationCap, permission: FACULTY_P.facultyRead },
+      { title: "petition.adminTitle", href: "/petition-management", icon: FileCheck, permission: PETITION_P.petitionRead },
+      { title: "schedule.adminTitle", href: "/schedule-management", icon: Calendar, permission: SCHEDULE_P.scheduleRead },
+      { title: "thesis.adminTitle", href: "/thesis-management", icon: BookMarked, permission: THESIS_P.thesisRead },
+    ],
+  },
+
   {
     label: "nav.group.sample",
     items: [{ title: "sample.nav", href: "/sample", icon: Layers, permission: SAMPLE_P.sampleRead }],
