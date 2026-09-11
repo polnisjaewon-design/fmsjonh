@@ -33,7 +33,8 @@ export async function getNewsCategoriesAction(): Promise<ActionResult<NewsCatego
 export async function createArticleAction(input: unknown): Promise<ActionResult<NewsArticleDto>> {
   return runAction(async () => {
     const ctx = await requirePermission(NEWS_P.newsManage);
-    const parsed = createArticleSchema.parse(input, { error: zodErrorMap(await getLocale()) });
+    const locale = await getLocale();
+    const parsed = createArticleSchema.parse(input, { error: zodErrorMap(locale) });
     const result = await createArticle(ctx.tenantId, parsed, ctx.userId);
     revalidatePath("/news");
     revalidatePath("/news-management");
@@ -44,7 +45,8 @@ export async function createArticleAction(input: unknown): Promise<ActionResult<
 export async function updateArticleAction(input: unknown): Promise<ActionResult<NewsArticleDto>> {
   return runAction(async () => {
     const ctx = await requirePermission(NEWS_P.newsManage);
-    const parsed = updateArticleSchema.parse(input, { error: zodErrorMap(await getLocale()) });
+    const locale = await getLocale();
+    const parsed = updateArticleSchema.parse(input, { error: zodErrorMap(locale) });
     const result = await updateArticle(ctx.tenantId, parsed);
     revalidatePath("/news");
     revalidatePath("/news-management");
@@ -55,7 +57,8 @@ export async function updateArticleAction(input: unknown): Promise<ActionResult<
 export async function deleteArticleAction(id: string): Promise<ActionResult<void>> {
   return runAction(async () => {
     const ctx = await requirePermission(NEWS_P.newsManage);
-    deleteArticleSchema.parse({ id }, { error: zodErrorMap(await getLocale()) });
+    const locale = await getLocale();
+    deleteArticleSchema.parse({ id }, { error: zodErrorMap(locale) });
     await deleteArticle(ctx.tenantId, id);
     revalidatePath("/news");
     revalidatePath("/news-management");

@@ -20,15 +20,25 @@ if (!Element.prototype.hasPointerCapture) Element.prototype.hasPointerCapture = 
 if (!Element.prototype.setPointerCapture) Element.prototype.setPointerCapture = () => {};
 if (!Element.prototype.releasePointerCapture) Element.prototype.releasePointerCapture = () => {};
 
-if (!window.PointerEvent) {
+
+
+
+if (!window.PointerEvent || !globalThis.PointerEvent) {
   class MockPointerEvent extends MouseEvent {
-    pointerType = "mouse";
-    constructor(type: string, params: MouseEventInit = {}) {
-      super(type, params);
+    constructor(type: string, props: MouseEventInit & { pointerType?: string } = {}) {
+      super(type, props);
+      Object.defineProperty(this, "button", { value: props.button ?? 0, writable: true });
+      Object.defineProperty(this, "ctrlKey", { value: props.ctrlKey ?? false, writable: true });
+      Object.defineProperty(this, "pointerType", { value: props.pointerType ?? "mouse", writable: true });
     }
   }
   // @ts-expect-error polyfill
   window.PointerEvent = MockPointerEvent;
+  // @ts-expect-error polyfill
+  globalThis.PointerEvent = MockPointerEvent;
 }
+
+
+
 
 

@@ -112,7 +112,7 @@ describe("AdminShell", () => {
     expect(document.querySelector(".palette")).toBeNull();
   });
 
-  it("signed-in: แสดงชื่อบัญชี และคลิก sign-out เรียก onSignOut", async () => {
+  it("signed-in: แสดงชื่อบัญชี และคลิก sign-out เรียก onSignOut", () => {
     const onSignOut = vi.fn();
     render(
       <AdminShell
@@ -131,7 +131,8 @@ describe("AdminShell", () => {
     expect(screen.getByText("สมชาย ใจดี")).toBeTruthy();
     const trigger = screen.getByRole("button", { name: /สมชาย ใจดี/ });
     fireEvent.pointerDown(trigger, { button: 0, ctrlKey: false });
-    const signOutItem = await screen.findByText("ออกจากระบบ");
+    fireEvent.pointerUp(trigger, { button: 0, ctrlKey: false });
+    const signOutItem = screen.getByText("ออกจากระบบ");
     fireEvent.click(signOutItem);
     expect(onSignOut).toHaveBeenCalledTimes(1);
   });
@@ -143,5 +144,14 @@ describe("AdminShell", () => {
       />,
     );
     expect(screen.getByText("3")).toBeTruthy();
+  });
+
+  it("แสดงรูปโลโก้เมื่อส่ง brandLogoUrl และแสดง SVG เมื่อไม่ส่ง", () => {
+    const { rerender } = render(<AdminShell {...baseProps({ brandLogoUrl: "/uploads/logos/logo.png" })} />);
+    const img = screen.getByRole("img", { name: "VibeCore" });
+    expect(img.getAttribute("src")).toBe("/uploads/logos/logo.png");
+
+    rerender(<AdminShell {...baseProps({ brandLogoUrl: null })} />);
+    expect(screen.queryByRole("img", { name: "VibeCore" })).toBeNull();
   });
 });

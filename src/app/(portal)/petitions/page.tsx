@@ -1,4 +1,4 @@
-import { getDefaultTenantId } from "@/features/news/server";
+import { getDefaultTenantId } from "@/features/identity/server";
 import { listDocumentTemplates } from "@/features/petition/server";
 import { PetitionClientForm } from "./_components/petition-form";
 

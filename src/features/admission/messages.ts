@@ -30,4 +30,7 @@ export const MESSAGES: Dictionary = {
   "admission.statusRejected": { th: "ไม่ผ่านเกณฑ์", en: "Rejected" },
   "admission.successMessage": { th: "ยื่นใบสมัครเรียบร้อยแล้ว เจ้าหน้าที่จะติดต่อกลับเพื่อยืนยันผล", en: "Application submitted successfully. Staff will contact you shortly." },
   "roles.module.admission": { th: "ระบบการรับสมัครเรียน", en: "Admissions" },
+  "perm.admission:read": { th: "ดูข้อมูลการรับสมัคร", en: "View admissions" },
+  "perm.admission:manage": { th: "จัดการระบบรับสมัคร", en: "Manage admissions" },
 };
+

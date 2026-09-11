@@ -6,6 +6,7 @@ const PUBLIC_PREFIXES = [
   "/reset-password/",
   "/verify-email/",
   "/api/auth/",
+  "/api/health",
   "/_next/",
   "/favicon.ico",
   "/news",
@@ -15,6 +16,7 @@ const PUBLIC_PREFIXES = [
   "/theses",
   "/schedules",
   "/petitions",
+  "/uploads/",
 ];
 const GUEST_ONLY = ["/login", "/forgot-password"];
 
@@ -34,7 +36,9 @@ export async function proxy(req: NextRequest) {
   }
 
 
-  const secureCookie = (process.env.APP_URL ?? "").startsWith("https://");
+  const secureCookie =
+    (process.env.APP_URL ?? "").startsWith("https://") ||
+    req.headers.get("x-forwarded-proto") === "https";
   const token = await getToken({ req, secret: process.env.AUTH_SECRET, secureCookie });
   const loggedIn = !!token && !token.invalid && !!token.userId;
 

@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import { Calendar, Eye, ArrowLeft } from "lucide-react";
 import { getLocale } from "@/shared/lib/i18n/server";
 import { formatDate } from "@/shared/lib/format";
-import { getDefaultTenantId, getArticleBySlug } from "@/features/news/server";
+import { getDefaultTenantId } from "@/features/identity/server";
+import { getArticleBySlug } from "@/features/news/server";
 
 export default async function NewsDetailPage(props: {
   params: Promise<{ slug: string }>;

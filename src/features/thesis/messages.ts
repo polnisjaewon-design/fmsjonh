@@ -21,4 +21,7 @@ export const MESSAGES: Dictionary = {
   "thesis.create": { th: "เพิ่มหัวข้อวิทยานิพนธ์", en: "Add Thesis" },
   "thesis.empty": { th: "ไม่พบข้อมูลวิทยานิพนธ์", en: "No theses found" },
   "roles.module.thesis": { th: "ระบบวิทยานิพนธ์และคลังวิจัย", en: "Thesis & Research" },
+  "perm.thesis:read": { th: "ดูข้อมูลวิทยานิพนธ์", en: "View theses" },
+  "perm.thesis:manage": { th: "จัดการวิทยานิพนธ์", en: "Manage theses" },
 };
+

@@ -2,17 +2,19 @@
 
 import { revalidatePath } from "next/cache";
 import { runAction, type ActionResult } from "@/shared/lib/result";
-import { requirePermission } from "@/features/identity/server";
+import { requirePermission, getDefaultTenantId } from "@/features/identity/server";
+import { getLocale } from "@/shared/lib/i18n/server";
+import { zodErrorMap } from "@/shared/lib/i18n/zod-locale";
 import { ADMISSION_P } from "../permissions";
 import type { ApplicationDto } from "../index";
 import { createApplicationSchema, updateApplicationStatusSchema } from "./validations";
 import { submitApplication, updateApplicationStatus, listAdminApplications } from "./services";
-import { getDefaultTenantId } from "@/features/news/server";
 
 export async function submitApplicationPublicAction(input: unknown): Promise<ActionResult<ApplicationDto>> {
   return runAction(async () => {
+    const locale = await getLocale();
     const tenantId = await getDefaultTenantId();
-    const parsed = createApplicationSchema.parse(input);
+    const parsed = createApplicationSchema.parse(input, { error: zodErrorMap(locale) });
     const result = await submitApplication(tenantId, parsed);
     revalidatePath("/admissions");
     revalidatePath("/admission-management");
@@ -30,8 +32,9 @@ export async function getAdminApplicationsAction(): Promise<ActionResult<Applica
 export async function updateApplicationStatusAction(input: unknown): Promise<ActionResult<void>> {
   return runAction(async () => {
     const ctx = await requirePermission(ADMISSION_P.admissionManage);
-    const parsed = updateApplicationStatusSchema.parse(input);
-    await updateApplicationStatus(ctx.tenantId, parsed);
+    const locale = await getLocale();
+    const parsed = updateApplicationStatusSchema.parse(input, { error: zodErrorMap(locale) });
+    await updateApplicationStatus(ctx.tenantId, parsed, ctx.userId);
     revalidatePath("/admission-management");
   });
 }

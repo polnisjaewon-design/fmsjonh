@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { runAction, type ActionResult } from "@/shared/lib/result";
 import { requirePermission } from "@/features/identity/server";
+import { getLocale } from "@/shared/lib/i18n/server";
+import { zodErrorMap } from "@/shared/lib/i18n/zod-locale";
 import { THESIS_P } from "../permissions";
 import type { ThesisDto } from "../index";
 import { createThesisSchema, updateThesisSchema } from "./validations";
@@ -18,7 +20,8 @@ export async function getAdminThesesAction(): Promise<ActionResult<ThesisDto[]>>
 export async function createThesisAction(input: unknown): Promise<ActionResult<ThesisDto>> {
   return runAction(async () => {
     const ctx = await requirePermission(THESIS_P.thesisManage);
-    const parsed = createThesisSchema.parse(input);
+    const locale = await getLocale();
+    const parsed = createThesisSchema.parse(input, { error: zodErrorMap(locale) });
     const res = await createThesis(ctx.tenantId, parsed);
     revalidatePath("/theses");
     revalidatePath("/thesis-management");
@@ -29,7 +32,8 @@ export async function createThesisAction(input: unknown): Promise<ActionResult<T
 export async function updateThesisAction(input: unknown): Promise<ActionResult<ThesisDto>> {
   return runAction(async () => {
     const ctx = await requirePermission(THESIS_P.thesisManage);
-    const parsed = updateThesisSchema.parse(input);
+    const locale = await getLocale();
+    const parsed = updateThesisSchema.parse(input, { error: zodErrorMap(locale) });
     const res = await updateThesis(ctx.tenantId, parsed);
     revalidatePath("/theses");
     revalidatePath("/thesis-management");

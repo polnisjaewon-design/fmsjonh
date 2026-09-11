@@ -1,5 +1,5 @@
 import { Users, UserCheck, Award, MapPin } from "lucide-react";
-import { getDefaultTenantId } from "@/features/news/server";
+import { getDefaultTenantId } from "@/features/identity/server";
 import { listFacultyMembers } from "@/features/faculty/server";
 
 export default async function FacultyPage() {

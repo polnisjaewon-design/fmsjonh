@@ -1,20 +1,6 @@
 import { prisma } from "@/shared/lib/infra/prisma";
+import { formatThaiMonasticFullName } from "@/shared/lib/format";
 import type { FacultyMemberDto } from "../index";
-
-function formatFullName(m: {
-  titleTh: string;
-  academicRank?: string | null;
-  firstNameTh: string;
-  lastNameTh?: string | null;
-  monasticName?: string | null;
-}): string {
-  const parts: string[] = [];
-  if (m.academicRank) parts.push(m.academicRank);
-  parts.push(m.titleTh + m.firstNameTh);
-  if (m.monasticName) parts.push(`(${m.monasticName})`);
-  if (m.lastNameTh) parts.push(m.lastNameTh);
-  return parts.join(" ");
-}
 
 export async function listFacultyMembers(tenantId: string): Promise<FacultyMemberDto[]> {
   const members = await prisma.facultyMember.findMany({
@@ -30,7 +16,7 @@ export async function listFacultyMembers(tenantId: string): Promise<FacultyMembe
     firstNameTh: m.firstNameTh,
     lastNameTh: m.lastNameTh,
     monasticName: m.monasticName,
-    fullNameTh: formatFullName(m),
+    fullNameTh: formatThaiMonasticFullName(m),
     titleEn: m.titleEn,
     firstNameEn: m.firstNameEn,
     lastNameEn: m.lastNameEn,
@@ -62,7 +48,7 @@ export async function listVipassanaMasters(tenantId: string): Promise<FacultyMem
     firstNameTh: m.firstNameTh,
     lastNameTh: m.lastNameTh,
     monasticName: m.monasticName,
-    fullNameTh: formatFullName(m),
+    fullNameTh: formatThaiMonasticFullName(m),
     titleEn: m.titleEn,
     firstNameEn: m.firstNameEn,
     lastNameEn: m.lastNameEn,
@@ -133,7 +119,7 @@ export async function createFacultyMember(
     firstNameTh: created.firstNameTh,
     lastNameTh: created.lastNameTh,
     monasticName: created.monasticName,
-    fullNameTh: formatFullName(created),
+    fullNameTh: formatThaiMonasticFullName(created),
     titleEn: created.titleEn,
     firstNameEn: created.firstNameEn,
     lastNameEn: created.lastNameEn,
@@ -205,7 +191,7 @@ export async function updateFacultyMember(
     firstNameTh: updated.firstNameTh,
     lastNameTh: updated.lastNameTh,
     monasticName: updated.monasticName,
-    fullNameTh: formatFullName(updated),
+    fullNameTh: formatThaiMonasticFullName(updated),
     titleEn: updated.titleEn,
     firstNameEn: updated.firstNameEn,
     lastNameEn: updated.lastNameEn,

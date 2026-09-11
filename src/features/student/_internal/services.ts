@@ -1,18 +1,8 @@
 import { prisma } from "@/shared/lib/infra/prisma";
+import { formatThaiMonasticFullName } from "@/shared/lib/format";
+import { writeAudit } from "@/features/identity/server";
 import type { StudentProfileDto } from "../index";
 import type { StudentProfileInput } from "./validations";
-
-function formatStudentFullName(s: {
-  titleTh: string;
-  firstNameTh: string;
-  lastNameTh?: string | null;
-  monasticName?: string | null;
-}): string {
-  const parts: string[] = [s.titleTh + s.firstNameTh];
-  if (s.monasticName) parts.push(`(${s.monasticName})`);
-  if (s.lastNameTh) parts.push(s.lastNameTh);
-  return parts.join(" ");
-}
 
 export async function listStudents(tenantId: string): Promise<StudentProfileDto[]> {
   const students = await prisma.studentProfile.findMany({
@@ -28,7 +18,7 @@ export async function listStudents(tenantId: string): Promise<StudentProfileDto[
     firstNameTh: s.firstNameTh,
     lastNameTh: s.lastNameTh,
     monasticName: s.monasticName,
-    fullNameTh: formatStudentFullName(s),
+    fullNameTh: formatThaiMonasticFullName(s),
     monasticRank: s.monasticRank,
     templeName: s.templeName,
     ecclesiasticalProvince: s.ecclesiasticalProvince,
@@ -69,7 +59,7 @@ export async function createStudent(tenantId: string, input: StudentProfileInput
     firstNameTh: created.firstNameTh,
     lastNameTh: created.lastNameTh,
     monasticName: created.monasticName,
-    fullNameTh: formatStudentFullName(created),
+    fullNameTh: formatThaiMonasticFullName(created),
     monasticRank: created.monasticRank,
     templeName: created.templeName,
     ecclesiasticalProvince: created.ecclesiasticalProvince,
@@ -112,7 +102,7 @@ export async function updateStudent(
     firstNameTh: updated.firstNameTh,
     lastNameTh: updated.lastNameTh,
     monasticName: updated.monasticName,
-    fullNameTh: formatStudentFullName(updated),
+    fullNameTh: formatThaiMonasticFullName(updated),
     monasticRank: updated.monasticRank,
     templeName: updated.templeName,
     ecclesiasticalProvince: updated.ecclesiasticalProvince,
@@ -124,9 +114,27 @@ export async function updateStudent(
   };
 }
 
-export async function deleteStudent(tenantId: string, id: string): Promise<void> {
-  await prisma.studentProfile.deleteMany({
-    where: { id, tenantId },
+export async function deleteStudent(tenantId: string, id: string, actorId?: string | null): Promise<void> {
+  await prisma.$transaction(async (tx) => {
+    const before = await tx.studentProfile.findFirst({
+      where: { id, tenantId },
+    });
+    if (!before) return;
+
+    await tx.studentProfile.delete({
+      where: { id },
+    });
+
+    if (actorId) {
+      await writeAudit({
+        tenantId,
+        actorId,
+        action: "student.student_delete",
+        entity: "studentProfile",
+        entityId: id,
+        before,
+      }, tx);
+    }
   });
 }
 

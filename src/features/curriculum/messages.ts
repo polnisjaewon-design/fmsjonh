@@ -26,5 +26,8 @@ export const MESSAGES: Dictionary = {
   "curriculum.deleteCourse": { th: "ลบรายวิชา", en: "Delete Course" },
   "curriculum.deleteConfirm": { th: "คุณแน่ใจหรือไม่ว่าต้องการลบรายวิชานี้?", en: "Are you sure you want to delete this course?" },
   "roles.module.curriculum": { th: "ระบบโครงสร้างหลักสูตร", en: "Curriculum & Courses" },
+  "perm.curriculum:read": { th: "ดูข้อมูลโครงสร้างหลักสูตร", en: "View curriculum" },
+  "perm.curriculum:manage": { th: "จัดการโครงสร้างหลักสูตร", en: "Manage curriculum" },
 };
+
 

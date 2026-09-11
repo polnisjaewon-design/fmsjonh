@@ -1,5 +1,5 @@
 import { Award, Clock } from "lucide-react";
-import { getDefaultTenantId } from "@/features/news/server";
+import { getDefaultTenantId } from "@/features/identity/server";
 import { getActiveCurriculum } from "@/features/curriculum/server";
 
 export default async function CurriculumPage() {

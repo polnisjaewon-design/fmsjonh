@@ -1,6 +1,6 @@
 import { Search, Sparkles, FileText } from "lucide-react";
 
-import { getDefaultTenantId } from "@/features/news/server";
+import { getDefaultTenantId } from "@/features/identity/server";
 import { listPublishedTheses } from "@/features/thesis/server";
 
 export default async function ThesesPublicPage(props: {

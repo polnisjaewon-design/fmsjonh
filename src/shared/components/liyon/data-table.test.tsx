@@ -135,7 +135,7 @@ describe("DataTable — สถานะ data", () => {
     expect(screen.getByRole("checkbox", { name: "เลือกทั้งหมด" })).toBeTruthy(); // หัวตารางไม่หาย
   });
 
-  it("row menu: เปิดเมนูสามจุดแล้วคลิกรายการเรียก onSelect", async () => {
+  it("row menu: เปิดเมนูสามจุดแล้วคลิกรายการเรียก onSelect", () => {
     const onEdit = vi.fn();
     render(
       <DataTable
@@ -160,12 +160,13 @@ describe("DataTable — สถานะ data", () => {
     );
     const trigger = screen.getAllByRole("button", { name: /จัดการ/ })[0];
     fireEvent.pointerDown(trigger, { button: 0, ctrlKey: false });
-    const item = await screen.findByText("แก้ไข");
+    fireEvent.pointerUp(trigger, { button: 0, ctrlKey: false });
+    const item = screen.getByText("แก้ไข");
     fireEvent.click(item);
     expect(onEdit).toHaveBeenCalledTimes(1);
   });
 
-  it("row menu: disabled ปิดปุ่มจริง และคลิกไม่เรียก onSelect", async () => {
+  it("row menu: disabled ปิดปุ่มจริง และคลิกไม่เรียก onSelect", () => {
     const onDelete = vi.fn();
     render(
       <DataTable
@@ -186,8 +187,9 @@ describe("DataTable — สถานะ data", () => {
     );
     const trigger = screen.getAllByRole("button", { name: /จัดการ/ })[0];
     fireEvent.pointerDown(trigger, { button: 0, ctrlKey: false });
-    const item = await screen.findByRole("menuitem", { name: "ลบ" });
-    expect((item as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.pointerUp(trigger, { button: 0, ctrlKey: false });
+    const item = screen.getByText("ลบ");
+    expect((item.closest("button") as HTMLButtonElement).disabled).toBe(true);
     fireEvent.click(item);
     expect(onDelete).not.toHaveBeenCalled();
   });

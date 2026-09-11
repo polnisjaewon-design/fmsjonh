@@ -2,12 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { runAction, type ActionResult } from "@/shared/lib/result";
-import { requirePermission } from "@/features/identity/server";
+import { requirePermission, getDefaultTenantId } from "@/features/identity/server";
+import { getLocale } from "@/shared/lib/i18n/server";
+import { zodErrorMap } from "@/shared/lib/i18n/zod-locale";
 import { SCHEDULE_P } from "../permissions";
 import type { ClassScheduleDto } from "../index";
 import { createScheduleSchema } from "./validations";
 import { listCurrentSchedules, createScheduleItem, deleteScheduleItem } from "./services";
-import { getDefaultTenantId } from "@/features/news/server";
 
 export async function getPublicSchedulesAction(): Promise<ActionResult<ClassScheduleDto[]>> {
   return runAction(async () => {
@@ -23,11 +24,11 @@ export async function getAdminSchedulesAction(): Promise<ActionResult<ClassSched
   });
 }
 
-
 export async function createScheduleAction(input: unknown): Promise<ActionResult<ClassScheduleDto>> {
   return runAction(async () => {
     const ctx = await requirePermission(SCHEDULE_P.scheduleManage);
-    const parsed = createScheduleSchema.parse(input);
+    const locale = await getLocale();
+    const parsed = createScheduleSchema.parse(input, { error: zodErrorMap(locale) });
     const res = await createScheduleItem(ctx.tenantId, parsed);
     revalidatePath("/schedules");
     revalidatePath("/schedule-management");

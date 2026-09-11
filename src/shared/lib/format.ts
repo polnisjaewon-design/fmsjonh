@@ -26,3 +26,34 @@ export function localizedName(entity: Bilingual, locale: Locale): string {
 export function academicYearLabel(yearBE: number, locale: Locale): string {
   return locale === "th" ? `ปีการศึกษา ${yearBE}` : `AY ${yearBE - 543}`;
 }
+
+export interface MonasticPersonName {
+  titleTh: string;
+  academicRank?: string | null;
+  firstNameTh: string;
+  lastNameTh?: string | null;
+  monasticName?: string | null;
+}
+
+/**
+ * จัดรูปแบบชื่อเต็มภาษาไทยตามอัตลักษณ์สงฆ์และฆราวาส:
+ * - พระสงฆ์: [ตำแหน่งวิชาการ] [สมณศักดิ์/คำนำหน้า][ชื่อ] ([ฉายา]) [นามสกุลถ้ามี]
+ * - ฆราวาส/แม่ชี: [ตำแหน่งวิชาการ] [คำนำหน้า][ชื่อ] [นามสกุล]
+ */
+export function formatThaiMonasticFullName(p: MonasticPersonName): string {
+  const parts: string[] = [];
+  if (p.academicRank && p.academicRank.trim() !== "") {
+    parts.push(p.academicRank.trim());
+  }
+  const namePart = (p.titleTh || "") + (p.firstNameTh || "");
+  if (namePart) {
+    parts.push(namePart);
+  }
+  if (p.monasticName && p.monasticName.trim() !== "") {
+    parts.push(`(${p.monasticName.trim()})`);
+  }
+  if (p.lastNameTh && p.lastNameTh.trim() !== "") {
+    parts.push(p.lastNameTh.trim());
+  }
+  return parts.join(" ");
+}

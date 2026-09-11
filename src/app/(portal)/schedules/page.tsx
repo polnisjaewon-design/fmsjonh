@@ -1,5 +1,5 @@
 import { Calendar, Clock, Video, MapPin, UserCheck, ExternalLink } from "lucide-react";
-import { getDefaultTenantId } from "@/features/news/server";
+import { getDefaultTenantId } from "@/features/identity/server";
 import { listCurrentSchedules } from "@/features/schedule/server";
 
 export default async function SchedulesPublicPage() {

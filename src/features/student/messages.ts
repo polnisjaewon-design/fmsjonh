@@ -20,4 +20,7 @@ export const MESSAGES: Dictionary = {
   "student.delete": { th: "ลบข้อมูลนิสิต", en: "Delete Student" },
   "student.deleteConfirm": { th: "คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนิสิตท่านนี้?", en: "Are you sure you want to delete this student?" },
   "roles.module.student": { th: "ระบบจัดการทะเบียนนิสิต", en: "Student Management" },
+  "perm.student:read": { th: "ดูข้อมูลทะเบียนนิสิต", en: "View student profiles" },
+  "perm.student:manage": { th: "จัดการทะเบียนนิสิต", en: "Manage student profiles" },
 };
+

@@ -20,5 +20,8 @@ export const MESSAGES: Dictionary = {
   "faculty.isVipassanaMaster": { th: "พระวิปัสสนาจารย์", en: "Vipassana Master" },
   "faculty.isExecutive": { th: "ผู้บริหารหลักสูตร", en: "Executive" },
   "roles.module.faculty": { th: "ระบบข้อมูลคณาจารย์และบุคลากร", en: "Faculty & Staff" },
+  "perm.faculty:read": { th: "ดูข้อมูลคณาจารย์", en: "View faculty members" },
+  "perm.faculty:manage": { th: "จัดการข้อมูลคณาจารย์", en: "Manage faculty members" },
 };
+
 

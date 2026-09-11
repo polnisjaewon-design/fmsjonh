@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { runAction, type ActionResult } from "@/shared/lib/result";
 import { requirePermission } from "@/features/identity/server";
+import { getLocale } from "@/shared/lib/i18n/server";
+import { zodErrorMap } from "@/shared/lib/i18n/zod-locale";
 import { CURRICULUM_P } from "../permissions";
 import type { CurriculumDto, CourseDto } from "../index";
 import { courseSchema, updateCourseSchema } from "./validations";
@@ -21,7 +23,8 @@ export async function createCourseAction(
 ): Promise<ActionResult<CourseDto>> {
   return runAction(async () => {
     const ctx = await requirePermission(CURRICULUM_P.curriculumManage);
-    const parsed = courseSchema.parse(input);
+    const locale = await getLocale();
+    const parsed = courseSchema.parse(input, { error: zodErrorMap(locale) });
     const result = await createCourse(ctx.tenantId, curriculumId, parsed);
     revalidatePath("/curriculum");
     revalidatePath("/curriculum-management");
@@ -32,7 +35,8 @@ export async function createCourseAction(
 export async function updateCourseAction(input: unknown): Promise<ActionResult<CourseDto>> {
   return runAction(async () => {
     const ctx = await requirePermission(CURRICULUM_P.curriculumManage);
-    const parsed = updateCourseSchema.parse(input);
+    const locale = await getLocale();
+    const parsed = updateCourseSchema.parse(input, { error: zodErrorMap(locale) });
     const result = await updateCourse(ctx.tenantId, parsed);
     revalidatePath("/curriculum");
     revalidatePath("/curriculum-management");

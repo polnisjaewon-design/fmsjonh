@@ -2,7 +2,8 @@ import Link from "next/link";
 import { Calendar, Eye, ArrowRight } from "lucide-react";
 import { getLocale } from "@/shared/lib/i18n/server";
 import { formatDate } from "@/shared/lib/format";
-import { getDefaultTenantId, listPublishedArticles, listNewsCategories } from "@/features/news/server";
+import { getDefaultTenantId } from "@/features/identity/server";
+import { listPublishedArticles, listNewsCategories } from "@/features/news/server";
 
 export default async function NewsIndexPage(props: {
   searchParams: Promise<{ category?: string }>;

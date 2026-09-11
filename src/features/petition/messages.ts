@@ -18,4 +18,7 @@ export const MESSAGES: Dictionary = {
   "petition.approve": { th: "อนุมัติคำร้อง", en: "Approve" },
   "petition.reject": { th: "ไม่อนุมัติ", en: "Reject" },
   "roles.module.petition": { th: "ระบบคำร้องและอนุมัติเอกสาร", en: "Petitions & Approvals" },
+  "perm.petition:read": { th: "ดูคำร้องออนไลน์", en: "View petitions" },
+  "perm.petition:approve": { th: "พิจารณาอนุมัติคำร้อง", en: "Approve petitions" },
 };
+

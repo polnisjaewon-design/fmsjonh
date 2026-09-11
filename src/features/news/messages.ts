@@ -28,4 +28,7 @@ export const MESSAGES: Dictionary = {
   "news.empty": { th: "ยังไม่มีข่าวสารในระบบ", en: "No news articles available yet" },
   "news.views": { th: "ยอดผู้เข้าชม", en: "Views" },
   "roles.module.news": { th: "ระบบข่าวสารประชาสัมพันธ์", en: "News & Announcements" },
+  "perm.news:read": { th: "ดูข่าวสารประชาสัมพันธ์", en: "View news articles" },
+  "perm.news:manage": { th: "จัดการข่าวสารประชาสัมพันธ์", en: "Manage news articles" },
 };
+

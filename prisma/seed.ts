@@ -17,8 +17,8 @@ async function main() {
   }
   const core = await seedCore(prisma, {
     tenantCode: "MCU-VIPASSANA",
-    nameTh: "หลักสูตรพุทธศาสตรมหาบัณฑิต สาขาวิชาวิปัสสนาภาวนาศึกษา (ภาคเสาร์-อาทิตย์) มจร",
-    nameEn: "Master of Buddhism in Vipassana Meditation Studies (Weekend Program) MCU",
+    nameTh: "หลักสูตรพุทธศาสตรมหาบัณฑิต สาขาวิชาวิปัสสนาภาวนาศึกษา(ภาคเสาร์-อาทิตย์) ภาควิชาพระพุทธศาสนา คณะพุทธศาสตร์ มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย",
+    nameEn: "Master of Arts Program in Vipassana Meditation Studies (Weekend Session), Department of Buddhism, Faculty of Buddhism, Mahachulalongkornrajavidyalaya University",
   });
   const hash = await bcrypt.hash(DEV_PASSWORD, 12);
   const users = [

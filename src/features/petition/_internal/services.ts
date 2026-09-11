@@ -1,4 +1,6 @@
 import { prisma } from "@/shared/lib/infra/prisma";
+import { formatThaiMonasticFullName } from "@/shared/lib/format";
+import { writeAudit } from "@/features/identity/server";
 import type { StudentPetitionDto, DocumentTemplateDto } from "../index";
 import type { CreatePetitionInput, ReviewPetitionInput } from "./validations";
 
@@ -27,7 +29,7 @@ export async function listAdminPetitions(tenantId: string): Promise<StudentPetit
     id: p.id,
     petitionNo: p.petitionNo,
     studentCode: p.student.studentCode,
-    studentName: `${p.student.titleTh}${p.student.firstNameTh} ${p.student.lastNameTh ?? ""}`,
+    studentName: formatThaiMonasticFullName(p.student),
     templateTitle: p.template.titleTh,
     title: p.title,
     reason: p.reason,
@@ -64,7 +66,7 @@ export async function submitPetition(tenantId: string, input: CreatePetitionInpu
     id: created.id,
     petitionNo: created.petitionNo,
     studentCode: created.student.studentCode,
-    studentName: `${created.student.titleTh}${created.student.firstNameTh} ${created.student.lastNameTh ?? ""}`,
+    studentName: formatThaiMonasticFullName(created.student),
     templateTitle: created.template.titleTh,
     title: created.title,
     reason: created.reason,
@@ -75,12 +77,35 @@ export async function submitPetition(tenantId: string, input: CreatePetitionInpu
   };
 }
 
-export async function reviewPetition(tenantId: string, input: ReviewPetitionInput): Promise<void> {
-  await prisma.studentPetition.updateMany({
-    where: { id: input.id, tenantId },
-    data: {
-      status: input.status,
-      approverNote: input.approverNote ?? null,
-    },
+export async function reviewPetition(
+  tenantId: string,
+  input: ReviewPetitionInput,
+  actorId?: string | null,
+): Promise<void> {
+  await prisma.$transaction(async (tx) => {
+    const before = await tx.studentPetition.findFirst({
+      where: { id: input.id, tenantId },
+    });
+    if (!before) return;
+
+    await tx.studentPetition.update({
+      where: { id: input.id },
+      data: {
+        status: input.status,
+        approverNote: input.approverNote ?? null,
+      },
+    });
+
+    if (actorId) {
+      await writeAudit({
+        tenantId,
+        actorId,
+        action: "petition.petition_review",
+        entity: "studentPetition",
+        entityId: input.id,
+        before: { status: before.status, approverNote: before.approverNote },
+        after: { status: input.status, approverNote: input.approverNote },
+      }, tx);
+    }
   });
 }

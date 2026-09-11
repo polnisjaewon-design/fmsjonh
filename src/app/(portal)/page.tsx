@@ -1,10 +1,12 @@
 import Link from "next/link";
-import { ArrowRight, BookOpen, Calendar, CheckCircle2, ChevronRight, Sparkles, UserCheck } from "lucide-react";
+import { ArrowRight, Calendar, CheckCircle2, ChevronRight, UserCheck } from "lucide-react";
 import { getLocale } from "@/shared/lib/i18n/server";
 import { formatDate } from "@/shared/lib/format";
-import { getDefaultTenantId, listPublishedArticles } from "@/features/news/server";
+import { getDefaultTenantId } from "@/features/identity/server";
+import { listPublishedArticles } from "@/features/news/server";
 import { getActiveCurriculum } from "@/features/curriculum/server";
 import { listVipassanaMasters } from "@/features/faculty/server";
+import { PortalHero } from "./_components/portal-hero";
 
 export default async function HomePage() {
   const locale = await getLocale();
@@ -18,66 +20,8 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-16 sm:space-y-24 pb-16">
-      {/* ๑. HERO SECTION */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-amber-900/10 via-amber-800/5 to-transparent pt-12 pb-20 lg:pt-20 lg:pb-28 border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-3xl mx-auto space-y-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100/80 border border-amber-300 text-amber-900 text-xs sm:text-sm font-medium">
-              <Sparkles className="w-4 h-4 text-amber-700" />
-              <span>เปิดรับสมัครนิสิตใหม่ ภาคเสาร์-อาทิตย์ ประจำปีการศึกษา ๒๕๖๙</span>
-            </div>
-
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-stone-900 tracking-tight leading-tight font-serif">
-              หลักสูตรพุทธศาสตรมหาบัณฑิต <br />
-              <span className="text-amber-800">สาขาวิชาวิปัสสนาภาวนาศึกษา</span>
-            </h1>
-
-            <p className="text-base sm:text-lg text-stone-600 leading-relaxed">
-              มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย บัณฑิตวิทยาลัย <br className="hidden sm:inline" />
-              มุ่งเน้นการวิจัยเชิงลึกและปฏิบัติวิปัสสนากรรมฐานตามแนวสติปัฏฐาน ๔ เพื่อสร้างองค์ความรู้ใหม่ทางจิตปัญญา
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-4">
-              <Link
-                href="/admissions"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-amber-800 hover:bg-amber-900 text-white font-semibold text-base shadow-md hover:shadow-lg transition-all"
-              >
-                <span>สมัครเรียนออนไลน์</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                href="/curriculum"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white hover:bg-stone-50 text-stone-800 font-semibold text-base border border-stone-300 shadow-xs transition-colors"
-              >
-                <BookOpen className="w-4 h-4 text-amber-700" />
-                <span>โครงสร้างหลักสูตร (มคอ.๒)</span>
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Highlight Stats Banner */}
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-12 sm:mt-16">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-white/90 backdrop-blur-md rounded-2xl p-6 shadow-md border border-amber-200/60">
-            <div className="text-center p-3">
-              <div className="text-2xl sm:text-3xl font-bold text-amber-800">เสาร์-อาทิตย์</div>
-              <div className="text-xs sm:text-sm text-stone-500 mt-1">เวลาเรียนยืดหยุ่น</div>
-            </div>
-            <div className="text-center p-3 border-l border-stone-200">
-              <div className="text-2xl sm:text-3xl font-bold text-amber-800">๒ ปี (๔ ภาค)</div>
-              <div className="text-xs sm:text-sm text-stone-500 mt-1">ระยะเวลาการศึกษา</div>
-            </div>
-            <div className="text-center p-3 border-l border-stone-200">
-              <div className="text-2xl sm:text-3xl font-bold text-amber-800">๓๖ หน่วยกิต</div>
-              <div className="text-xs sm:text-sm text-stone-500 mt-1">ตลอดหลักสูตร</div>
-            </div>
-            <div className="text-center p-3 border-l border-stone-200">
-              <div className="text-2xl sm:text-3xl font-bold text-amber-800">พธ.ม.</div>
-              <div className="text-xs sm:text-sm text-stone-500 mt-1">ปริญญาบัตร มจร</div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* ๑. HERO SECTION (Montfort Cinematic Style) */}
+      <PortalHero nameTh={curriculum?.nameTh} nameEn={curriculum?.nameEn} />
 
       {/* ๒. ข่าวสารประชาสัมพันธ์และกิจกรรมล่าสุด */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

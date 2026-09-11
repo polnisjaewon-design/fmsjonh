@@ -1,18 +1,8 @@
 import { prisma } from "@/shared/lib/infra/prisma";
+import { formatThaiMonasticFullName } from "@/shared/lib/format";
+import { writeAudit } from "@/features/identity/server";
 import type { AdmissionRoundDto, ApplicationDto } from "../index";
 import type { CreateApplicationInput, UpdateApplicationStatusInput } from "./validations";
-
-function formatApplicantFullName(a: {
-  titleTh: string;
-  firstNameTh: string;
-  lastNameTh?: string | null;
-  monasticName?: string | null;
-}): string {
-  const parts: string[] = [a.titleTh + a.firstNameTh];
-  if (a.monasticName) parts.push(`(${a.monasticName})`);
-  if (a.lastNameTh) parts.push(a.lastNameTh);
-  return parts.join(" ");
-}
 
 export async function getActiveAdmissionRound(tenantId: string): Promise<AdmissionRoundDto | null> {
   const round = await prisma.admissionRound.findFirst({
@@ -49,7 +39,7 @@ export async function listAdminApplications(tenantId: string): Promise<Applicati
     firstNameTh: a.firstNameTh,
     lastNameTh: a.lastNameTh,
     monasticName: a.monasticName,
-    fullNameTh: formatApplicantFullName(a),
+    fullNameTh: formatThaiMonasticFullName(a),
     templeName: a.templeName,
     phone: a.phone,
     email: a.email,
@@ -94,7 +84,7 @@ export async function submitApplication(tenantId: string, input: CreateApplicati
     firstNameTh: created.firstNameTh,
     lastNameTh: created.lastNameTh,
     monasticName: created.monasticName,
-    fullNameTh: formatApplicantFullName(created),
+    fullNameTh: formatThaiMonasticFullName(created),
     templeName: created.templeName,
     phone: created.phone,
     email: created.email,
@@ -105,12 +95,35 @@ export async function submitApplication(tenantId: string, input: CreateApplicati
   };
 }
 
-export async function updateApplicationStatus(tenantId: string, input: UpdateApplicationStatusInput): Promise<void> {
-  await prisma.application.updateMany({
-    where: { id: input.id, tenantId },
-    data: {
-      status: input.status,
-      reviewerNote: input.reviewerNote ?? null,
-    },
+export async function updateApplicationStatus(
+  tenantId: string,
+  input: UpdateApplicationStatusInput,
+  actorId?: string | null,
+): Promise<void> {
+  await prisma.$transaction(async (tx) => {
+    const before = await tx.application.findFirst({
+      where: { id: input.id, tenantId },
+    });
+    if (!before) return;
+
+    await tx.application.update({
+      where: { id: input.id },
+      data: {
+        status: input.status,
+        reviewerNote: input.reviewerNote ?? null,
+      },
+    });
+
+    if (actorId) {
+      await writeAudit({
+        tenantId,
+        actorId,
+        action: "admission.application_update_status",
+        entity: "application",
+        entityId: input.id,
+        before: { status: before.status, reviewerNote: before.reviewerNote },
+        after: { status: input.status, reviewerNote: input.reviewerNote },
+      }, tx);
+    }
   });
 }

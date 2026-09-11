@@ -1,0 +1,164 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
+import { Loader2, User, Settings } from "lucide-react";
+import { AdminShell, useBreadcrumbTailItems, type Crumb } from "@/shared/components/liyon";
+import { AdminSidebarNav } from "@/components/layout/admin-sidebar-nav";
+import { LanguageSwitcher } from "@/components/layout/language-switcher";
+import { useSidebarStore } from "@/components/layout/sidebar-store";
+import { getActiveNavChain } from "@/components/layout/sidebar-nav";
+import { useAppSession } from "@/hooks/use-session";
+import { useT, useLocale } from "@/shared/lib/i18n/client";
+import { localizedName } from "@/shared/lib/format";
+import { hasPermission, P } from "@/features/identity";
+
+export interface AdminLayoutClientProps {
+  children: React.ReactNode;
+  logoUrl?: string | null;
+  tenantNameTh?: string | null;
+  tenantNameEn?: string | null;
+  taglineTh?: string | null;
+  taglineEn?: string | null;
+}
+
+export function AdminLayoutClient({
+  children,
+  logoUrl,
+  tenantNameTh,
+  tenantNameEn,
+  taglineTh,
+  taglineEn,
+}: AdminLayoutClientProps) {
+  const pathname = usePathname();
+  const t = useT();
+  const locale = useLocale();
+  const tail = useBreadcrumbTailItems();
+  const { status, user, roles, permissions, isSuperAdmin } = useAppSession();
+  const { collapsed, toggleCollapsed } = useSidebarStore();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [prev, setPrev] = useState(pathname);
+  const [mounted, setMounted] = useState(false);
+
+  // Live brand state for real-time reactivity when editing in settings
+  const [overrideBrand, setOverrideBrand] = useState<{
+    logoUrl?: string | null;
+    nameTh?: string;
+    nameEn?: string;
+    taglineTh?: string;
+    taglineEn?: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const handleUpdate = (
+      e: CustomEvent<{
+        logoUrl?: string | null;
+        nameTh?: string;
+        nameEn?: string;
+        taglineTh?: string;
+        taglineEn?: string;
+      }>
+    ) => {
+      if (e.detail) {
+        setOverrideBrand((prev) => ({ ...prev, ...e.detail }));
+      }
+    };
+    window.addEventListener("tenant-brand-updated", handleUpdate as EventListener);
+    return () =>
+      window.removeEventListener("tenant-brand-updated", handleUpdate as EventListener);
+  }, []);
+
+  const liveLogoUrl = overrideBrand?.logoUrl !== undefined ? overrideBrand.logoUrl : logoUrl;
+  const liveNameTh = overrideBrand?.nameTh !== undefined ? overrideBrand.nameTh : tenantNameTh;
+  const liveNameEn = overrideBrand?.nameEn !== undefined ? overrideBrand.nameEn : tenantNameEn;
+  const liveTaglineTh = overrideBrand?.taglineTh !== undefined ? overrideBrand.taglineTh : taglineTh;
+  const liveTaglineEn = overrideBrand?.taglineEn !== undefined ? overrideBrand.taglineEn : taglineEn;
+
+  if (pathname !== prev) {
+    setPrev(pathname);
+    setDrawerOpen(false);
+  }
+
+  // ธง mounted กัน hydration mismatch
+  useEffect(() => { setMounted(true); }, []); // eslint-disable-line react-hooks/set-state-in-effect
+
+  if (!mounted || status === "loading") {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  const initials = (user?.name ?? "?").trim().charAt(0).toUpperCase() || "?";
+  const chain = getActiveNavChain(pathname);
+  const breadcrumb: Crumb[] =
+    chain.length === 0 && tail.length === 0
+      ? []
+      : [
+          { label: t("nav.home"), href: "/dashboard" },
+          ...chain.map((c) => ({ label: t(c.title), href: c.href })),
+          ...tail,
+        ];
+  const ctx = { roles, permissions, isSuperAdmin };
+  const links = [
+    { href: "/me", label: t("account.profile"), icon: <User className="h-4 w-4" /> },
+    ...(hasPermission(ctx, P.settingsManage)
+      ? [{ href: "/settings", label: t("nav.settings"), icon: <Settings className="h-4 w-4" /> }]
+      : []),
+  ];
+
+  const brandName =
+    (locale === "en" ? liveNameEn : liveNameTh) ||
+    liveNameTh ||
+    liveNameEn ||
+    t("app.name");
+
+  const brandTagline =
+    (locale === "en" ? liveTaglineEn : liveTaglineTh) ||
+    liveTaglineTh ||
+    liveTaglineEn ||
+    t("app.tagline");
+
+  return (
+    <AdminShell
+      brandName={brandName}
+      brandTagline={brandTagline}
+      brandHref="/dashboard"
+      brandLogoUrl={liveLogoUrl}
+      breadcrumb={breadcrumb}
+      breadcrumbLabel={t("common.breadcrumb")}
+      roleLabel={roles[0] ? localizedName(roles[0], locale) : null}
+      languageSwitcher={<LanguageSwitcher className="lang" />}
+      notifications={null}
+      account={
+        user
+          ? {
+              name: user.name ?? "",
+              email: user.email ?? "",
+              imageUrl: user.image,
+              initials,
+              links,
+              onSignOut: () => signOut({ callbackUrl: "/login" }),
+              signOutLabel: t("account.logout"),
+            }
+          : null
+      }
+      accountLoading={!user}
+      themeToggleLabel={t("nav.themeToggle")}
+      collapsed={collapsed}
+      onToggleCollapsed={toggleCollapsed}
+      collapseLabel={t("nav.collapse")}
+      expandLabel={t("nav.expand")}
+      drawerOpen={drawerOpen}
+      onToggleDrawer={() => setDrawerOpen((v) => !v)}
+      onCloseDrawer={() => setDrawerOpen(false)}
+      drawerLabel={t("nav.openDrawer")}
+      sidebarAriaLabel={t("nav.menu")}
+      sidebarNav={<AdminSidebarNav />}
+    >
+      {children}
+    </AdminShell>
+  );
+}

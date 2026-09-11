@@ -1,0 +1,57 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: fms_postgres_prod
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-fms_prod_secret_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-ums_prod}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-ums_prod}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fms_network
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fms_nextjs_prod
+    restart: unless-stopped
+    ports:
+      - "${HOST_PORT:-3010}:3010"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-fms_prod_secret_pass}@db:5432/${POSTGRES_DB:-ums_prod}
+      AUTH_SECRET: ${AUTH_SECRET:-fms_mcu_vipassana_production_secret_32bytes_min}
+      AUTH_TRUST_HOST: "true"
+      APP_URL: ${APP_URL:-http://localhost:3010}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      AUTH_AUTO_PROVISION: ${AUTH_AUTO_PROVISION:-false}
+      DB_HOST: db
+      DB_PORT: 5432
+      SEED_ON_BOOT: ${SEED_ON_BOOT:-1}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - uploads_data:/app/public/uploads
+    networks:
+      - fms_network
+
+volumes:
+  postgres_data:
+    name: fms_postgres_data
+  uploads_data:
+    name: fms_uploads_data
+
+networks:
+  fms_network:
+    name: fms_production_network
+    driver: bridge

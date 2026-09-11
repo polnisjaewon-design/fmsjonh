@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { formatDate, localizedName, academicYearLabel } from "./format";
+import { formatDate, localizedName, academicYearLabel, formatThaiMonasticFullName } from "./format";
 
 const d = new Date("2026-09-07T03:04:00Z");
 
@@ -42,3 +42,44 @@ describe("academicYearLabel", () => {
     expect(academicYearLabel(2569, "en")).toBe("AY 2026");
   });
 });
+
+describe("formatThaiMonasticFullName", () => {
+  it("พระภิกษุมีฉายาและนามสกุล", () => {
+    const monk = {
+      titleTh: "พระ",
+      firstNameTh: "สมชาย",
+      monasticName: "ปญฺญาธโร",
+      lastNameTh: "ใจดี",
+    };
+    expect(formatThaiMonasticFullName(monk)).toBe("พระสมชาย (ปญฺญาธโร) ใจดี");
+  });
+
+  it("พระสงฆ์มีสมณศักดิ์ ตำแหน่งทางวิชาการ และฉายา", () => {
+    const monk = {
+      academicRank: "ศ.ดร.",
+      titleTh: "พระธรรมวัชรบัณฑิต",
+      firstNameTh: "",
+      monasticName: "สมจินต์ สมฺมาปญฺโญ",
+    };
+    expect(formatThaiMonasticFullName(monk)).toBe("ศ.ดร. พระธรรมวัชรบัณฑิต (สมจินต์ สมฺมาปญฺโญ)");
+  });
+
+  it("คฤหัสถ์ทั่วไป ไม่มีฉายา", () => {
+    const layman = {
+      titleTh: "นาย",
+      firstNameTh: "สมศักดิ์",
+      lastNameTh: "รักพุทธธรรม",
+    };
+    expect(formatThaiMonasticFullName(layman)).toBe("นายสมศักดิ์ รักพุทธธรรม");
+  });
+
+  it("แม่ชีหรือผู้ปฏิบัติธรรม", () => {
+    const nun = {
+      titleTh: "แม่ชี",
+      firstNameTh: "กรรณิการ์",
+      lastNameTh: "สมาธิธรรม",
+    };
+    expect(formatThaiMonasticFullName(nun)).toBe("แม่ชีกรรณิการ์ สมาธิธรรม");
+  });
+});
+

@@ -1,4 +1,4 @@
-import { getDefaultTenantId } from "@/features/news/server";
+import { getDefaultTenantId } from "@/features/identity/server";
 import { getActiveAdmissionRound } from "@/features/admission/server";
 import { AdmissionClientForm } from "./_components/admission-form";
 

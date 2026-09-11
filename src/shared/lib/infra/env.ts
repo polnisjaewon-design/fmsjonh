@@ -14,6 +14,7 @@ const schema = z.object({
   MICROSOFT_CLIENT_ID: z.string().optional().default(""),
   MICROSOFT_CLIENT_SECRET: z.string().optional().default(""),
   MICROSOFT_TENANT_ID: z.string().optional().default("common"),
+  AUTH_AUTO_PROVISION: z.enum(["true", "false"]).optional().default("false"),
 });
 
 export type Env = z.infer<typeof schema>;
@@ -35,3 +36,5 @@ export function env(): Env {
 export const smtpConfigured = () => env().SMTP_HOST !== "";
 export const googleOAuthConfigured = () => env().GOOGLE_CLIENT_ID !== "" && env().GOOGLE_CLIENT_SECRET !== "";
 export const microsoftOAuthConfigured = () => env().MICROSOFT_CLIENT_ID !== "" && env().MICROSOFT_CLIENT_SECRET !== "";
+export const authAutoProvision = () => env().AUTH_AUTO_PROVISION === "true";
+

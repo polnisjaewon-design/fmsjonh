@@ -3,7 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import MicrosoftEntraID from "next-auth/providers/microsoft-entra-id";
 import { prisma } from "@/shared/lib/infra/prisma";
-import { env, googleOAuthConfigured, microsoftOAuthConfigured } from "@/shared/lib/infra/env";
+import { env, googleOAuthConfigured, microsoftOAuthConfigured, authAutoProvision } from "@/shared/lib/infra/env";
 import { verifyPassword } from "@/shared/lib/security/password";
 import { logger } from "@/shared/lib/infra/logger";
 import { loginSchema } from "./validations/auth";
@@ -65,13 +65,42 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    /** OAuth: ต้องมีบัญชีอยู่ก่อน (แอดมินสร้าง) ไม่สร้างอัตโนมัติ */
+    /** OAuth: ต้องมีบัญชีอยู่ก่อน (แอดมินสร้าง) หรือสร้างอัตโนมัติหากเปิด AUTH_AUTO_PROVISION */
     async signIn({ user, account }) {
       if (!account || account.provider === "credentials") return true;
       const providerKey: OAuthProviderId = account.provider === "microsoft-entra-id" ? "microsoft" : "google";
       if (!user.email) return "/login?error=NoAccount";
       const existing = await prisma.user.findUnique({ where: { email: user.email.toLowerCase() } });
-      if (!existing || !existing.isActive) return "/login?error=NoAccount";
+      if (!existing || !existing.isActive) {
+        if (authAutoProvision()) {
+          const defaultTenant = await prisma.tenant.findFirst({ orderBy: { createdAt: "asc" } });
+          if (defaultTenant) {
+            const viewerRole = await prisma.role.findFirst({ where: { tenantId: defaultTenant.id, code: "VIEWER" } });
+            const newUser = await prisma.user.create({
+              data: {
+                email: user.email.toLowerCase(),
+                name: user.name || user.email.split("@")[0],
+                imageUrl: user.image ?? null,
+                provider: providerKey,
+                providerId: account.providerAccountId,
+                emailVerified: true,
+                isActive: true,
+                lastLoginAt: new Date(),
+                userTenants: {
+                  create: {
+                    tenantId: defaultTenant.id,
+                    isActive: true,
+                    ...(viewerRole ? { userRoles: { create: { roleId: viewerRole.id } } } : {}),
+                  },
+                },
+              },
+            });
+            user.id = newUser.id;
+            return true;
+          }
+        }
+        return "/login?error=NoAccount";
+      }
       await prisma.user.update({
         where: { id: existing.id },
         data: { provider: providerKey, providerId: account.providerAccountId, imageUrl: user.image ?? existing.imageUrl, lastLoginAt: new Date() },

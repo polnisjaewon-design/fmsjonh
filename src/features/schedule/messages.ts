@@ -20,4 +20,7 @@ export const MESSAGES: Dictionary = {
   "schedule.create": { th: "เพิ่มคาบเรียน", en: "Add Schedule Item" },
   "schedule.delete": { th: "ลบคาบเรียน", en: "Delete Schedule Item" },
   "roles.module.schedule": { th: "ระบบตารางเรียนและห้องเรียนออนไลน์", en: "Class Schedules" },
+  "perm.schedule:read": { th: "ดูตารางเรียน", en: "View class schedules" },
+  "perm.schedule:manage": { th: "จัดการตารางเรียน", en: "Manage class schedules" },
 };
+
