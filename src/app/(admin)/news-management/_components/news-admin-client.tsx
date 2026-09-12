@@ -19,6 +19,7 @@ import {
   LiyonSelect,
   LiyonSwitchRow,
   RowMenuItem,
+  TinyEditor,
   type DataTableColumn,
 } from "@/shared/components/liyon";
 import { Button } from "@/components/ui/button";
@@ -136,7 +137,9 @@ export function NewsAdminClient({ initialArticles, categories, canManage }: Prop
       toast.error(t("news.titleThRequired"));
       return;
     }
-    if (!formContentTh.trim()) {
+    const strippedContent = formContentTh.replace(/<[^>]*>/g, "").trim();
+    const hasMedia = formContentTh.includes("<img") || formContentTh.includes("<table");
+    if (!strippedContent && !hasMedia) {
       toast.error(t("news.contentThRequired"));
       return;
     }
@@ -394,14 +397,12 @@ export function NewsAdminClient({ initialArticles, categories, canManage }: Prop
                 </LiyonField>
 
                 <LiyonField label={t("news.contentTh")} htmlFor="news-content-th">
-                  <textarea
+                  <TinyEditor
                     id="news-content-th"
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                     value={formContentTh}
-                    onChange={(e) => setFormContentTh(e.target.value)}
-                    placeholder="เนื้อหาข่าวแบบละเอียด..."
-                    rows={6}
-                    required
+                    onChange={setFormContentTh}
+                    placeholder="พิมพ์และจัดรูปแบบเนื้อหาข่าวภาษาไทย (หัวข้อ, ตัวหนา, รายการ, ตาราง, ลิงก์)..."
+                    height={360}
                   />
                 </LiyonField>
               </div>
@@ -432,13 +433,12 @@ export function NewsAdminClient({ initialArticles, categories, canManage }: Prop
                 </LiyonField>
 
                 <LiyonField label={t("news.contentEn")} htmlFor="news-content-en">
-                  <textarea
+                  <TinyEditor
                     id="news-content-en"
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                     value={formContentEn}
-                    onChange={(e) => setFormContentEn(e.target.value)}
-                    placeholder="Detailed news content in English..."
-                    rows={6}
+                    onChange={setFormContentEn}
+                    placeholder="Type and format news content in English (headings, bold, lists, tables, links)..."
+                    height={360}
                   />
                 </LiyonField>
               </div>

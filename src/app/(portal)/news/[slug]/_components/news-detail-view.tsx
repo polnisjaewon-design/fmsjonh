@@ -120,9 +120,16 @@ export function NewsDetailView({ article, formattedDate }: Props) {
       )}
 
       {/* Content */}
-      <div className="prose prose-stone max-w-none text-stone-800 leading-relaxed whitespace-pre-line text-base sm:text-lg">
-        {displayContent}
-      </div>
+      {/<[a-z][\s\S]*>/i.test(displayContent) ? (
+        <div
+          className="prose prose-stone max-w-none text-stone-800 leading-relaxed text-base sm:text-lg [&_h1]:text-2xl sm:[&_h1]:text-3xl [&_h1]:font-bold [&_h1]:text-stone-900 [&_h1]:mt-8 [&_h1]:mb-4 [&_h2]:text-xl sm:[&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-stone-900 [&_h2]:mt-6 [&_h2]:mb-3 [&_h3]:text-lg sm:[&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-stone-900 [&_h3]:mt-5 [&_h3]:mb-2 [&_h4]:text-base [&_h4]:font-semibold [&_h4]:text-stone-900 [&_h4]:mt-4 [&_h4]:mb-2 [&_p]:mb-4 [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-4 [&_ul]:space-y-1.5 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-4 [&_ol]:space-y-1.5 [&_li]:leading-relaxed [&_blockquote]:border-l-4 [&_blockquote]:border-amber-600 [&_blockquote]:pl-4 [&_blockquote]:py-2 [&_blockquote]:my-4 [&_blockquote]:italic [&_blockquote]:text-stone-700 [&_blockquote]:bg-amber-50/60 [&_blockquote]:rounded-r-lg [&_table]:w-full [&_table]:border-collapse [&_table]:my-6 [&_th]:border [&_th]:border-stone-200 [&_th]:bg-stone-100 [&_th]:p-3 [&_th]:text-left [&_th]:font-semibold [&_td]:border [&_td]:border-stone-200 [&_td]:p-3 [&_a]:text-amber-800 [&_a]:underline hover:[&_a]:text-amber-900"
+          dangerouslySetInnerHTML={{ __html: displayContent }}
+        />
+      ) : (
+        <div className="prose prose-stone max-w-none text-stone-800 leading-relaxed whitespace-pre-line text-base sm:text-lg">
+          {displayContent}
+        </div>
+      )}
 
       {/* Footer Share */}
       <div className="pt-8 border-t border-stone-200/80 flex items-center justify-between">
