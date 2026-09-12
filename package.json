@@ -23,8 +23,10 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:bootstrap": "tsx prisma/bootstrap.ts",
     "sync:liyon": "tsx scripts/sync-liyon-theme.ts",
+    "build:mac": "bash scripts/build-mac-app.sh && bash scripts/build-dmg.sh",
     "postinstall": "prisma generate"
   },
+
   "dependencies": {
     "@prisma/adapter-pg": "6.19.3",
     "@prisma/client": "6.19.3",

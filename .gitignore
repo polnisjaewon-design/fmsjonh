@@ -14,3 +14,5 @@ e2e/.auth/
 /public/uploads/
 .env.docker
 prisma/*.bundle.js
+dist/
+
