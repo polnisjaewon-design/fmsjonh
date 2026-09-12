@@ -48,8 +48,17 @@ export async function listPublishedArticles(tenantId: string, limit = 20, catego
 }
 
 export async function getArticleBySlug(tenantId: string, slug: string): Promise<NewsArticleDto | null> {
+  let decoded = slug;
+  try {
+    decoded = decodeURIComponent(slug);
+  } catch {}
+
   const item = await prisma.newsArticle.findFirst({
-    where: { tenantId, slug, isPublished: true },
+    where: {
+      tenantId,
+      isPublished: true,
+      OR: [{ slug }, { slug: decoded }],
+    },
     include: { category: true },
   });
   if (!item) return null;

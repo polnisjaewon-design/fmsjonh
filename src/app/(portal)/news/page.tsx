@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Calendar, Eye, ArrowRight } from "lucide-react";
+import { Calendar, Eye, ArrowRight, Languages } from "lucide-react";
 import { getLocale } from "@/shared/lib/i18n/server";
 import { formatDate } from "@/shared/lib/format";
 import { getDefaultTenantId } from "@/features/identity/server";
@@ -91,13 +91,24 @@ export default async function NewsIndexPage(props: {
               )}
               <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                 <div className="space-y-2.5">
-                  <div className="flex items-center gap-2 text-xs text-stone-500">
-                    <Calendar className="w-3.5 h-3.5" />
-                    <span>{item.publishedAt ? formatDate(new Date(item.publishedAt), locale) : "—"}</span>
+                  <div className="flex items-center justify-between text-xs text-stone-500">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-3.5 h-3.5" />
+                      <span>{item.publishedAt ? formatDate(new Date(item.publishedAt), locale) : "—"}</span>
+                    </div>
+                    {item.titleEn && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 text-[10px] font-medium border border-purple-200">
+                        <Languages className="w-3 h-3" />
+                        ๒ ภาษา (EN)
+                      </span>
+                    )}
                   </div>
                   <h2 className="text-base font-bold text-stone-900 line-clamp-2 hover:text-amber-800">
                     <Link href={`/news/${item.slug}`}>{item.titleTh}</Link>
                   </h2>
+                  {item.titleEn && (
+                    <p className="text-xs text-stone-400 italic line-clamp-1 -mt-1">{item.titleEn}</p>
+                  )}
                   <p className="text-xs sm:text-sm text-stone-600 line-clamp-3 leading-relaxed">
                     {item.summaryTh || item.contentTh}
                   </p>

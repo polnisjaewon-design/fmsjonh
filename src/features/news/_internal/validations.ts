@@ -23,3 +23,16 @@ export const deleteArticleSchema = z.object({
 
 export type CreateArticleInput = z.infer<typeof createArticleSchema>;
 export type UpdateArticleInput = z.infer<typeof updateArticleSchema>;
+
+export const translateNewsSchema = z.object({
+  titleTh: z.string().trim().min(1, "news.titleThRequired"),
+  summaryTh: z.string().optional().nullable(),
+  contentTh: z.string().trim().min(1, "news.contentThRequired"),
+});
+export type TranslateNewsInput = z.infer<typeof translateNewsSchema>;
+
+export interface TranslatedNewsResult {
+  titleEn: string;
+  summaryEn: string;
+  contentEn: string;
+}

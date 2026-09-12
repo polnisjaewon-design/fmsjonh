@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { createArticleSchema, updateArticleSchema, deleteArticleSchema } from "./validations";
+import { createArticleSchema, updateArticleSchema, deleteArticleSchema, translateNewsSchema } from "./validations";
 
 describe("news validations", () => {
   it("validate createArticleSchema สำเร็จเมื่อข้อมูลถูกต้อง", () => {
@@ -31,4 +31,21 @@ describe("news validations", () => {
     expect(deleteArticleSchema.parse(valid).id).toBe("123e4567-e89b-12d3-a456-426614174000");
     expect(() => deleteArticleSchema.parse({ id: "abc" })).toThrow();
   });
+
+  it("validate translateNewsSchema สำเร็จเมื่อระบุ titleTh และ contentTh", () => {
+    const valid = {
+      titleTh: "ข่าวสารสำคัญ",
+      summaryTh: "สรุปย่อ",
+      contentTh: "เนื้อหาข่าวภาษาไทยเพื่อส่งให้ Gemini แปล",
+    };
+    const parsed = translateNewsSchema.parse(valid);
+    expect(parsed.titleTh).toBe("ข่าวสารสำคัญ");
+    expect(parsed.contentTh).toBe("เนื้อหาข่าวภาษาไทยเพื่อส่งให้ Gemini แปล");
+  });
+
+  it("validate translateNewsSchema ล้มเมื่อไม่มี titleTh หรือ contentTh", () => {
+    expect(() => translateNewsSchema.parse({ titleTh: "", contentTh: "เนื้อหา" })).toThrow();
+    expect(() => translateNewsSchema.parse({ titleTh: "หัวข้อ", contentTh: "" })).toThrow();
+  });
 });
+

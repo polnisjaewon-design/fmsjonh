@@ -3,7 +3,7 @@ import { prisma, type Db } from "@/shared/lib/infra/prisma";
 import { DEFAULT_PALETTE, isPalette, type PaletteId } from "@/shared/lib/palette";
 import { errors } from "@/shared/lib/errors";
 import { writeAudit } from "../audit";
-import type { UpdateSettingsInput, SmtpSettings, OrgInfo } from "../validations/settings";
+import type { UpdateSettingsInput, SmtpSettings, OrgInfo, GeminiSettings } from "../validations/settings";
 
 export interface TenantSettings {
   code: string;
@@ -13,6 +13,7 @@ export interface TenantSettings {
   palette: PaletteId;
   smtp?: SmtpSettings;
   orgInfo?: OrgInfo;
+  gemini?: GeminiSettings;
 }
 
 async function readTenantSettings(tenantId: string, db: Db): Promise<TenantSettings> {
@@ -22,10 +23,11 @@ async function readTenantSettings(tenantId: string, db: Db): Promise<TenantSetti
     if (fallbackTenant) t = fallbackTenant;
   }
   if (!t) throw errors.not_found();
-  const s = (t.settings as { palette?: unknown; smtp?: SmtpSettings; orgInfo?: OrgInfo }) || {};
+  const s = (t.settings as { palette?: unknown; smtp?: SmtpSettings; orgInfo?: OrgInfo; gemini?: GeminiSettings }) || {};
   const p = s.palette;
   const smtp = s.smtp;
   const orgInfo = s.orgInfo;
+  const gemini = s.gemini;
   return {
     code: t.code,
     nameTh: t.nameTh,
@@ -57,6 +59,13 @@ async function readTenantSettings(tenantId: string, db: Db): Promise<TenantSetti
       lineId: orgInfo.lineId || "",
       facebookUrl: orgInfo.facebookUrl || "",
     } : undefined,
+    gemini: gemini ? {
+      apiKey: gemini.apiKey || "",
+      model: gemini.model || "gemini-2.5-flash",
+    } : (process.env.GEMINI_API_KEY ? {
+      apiKey: process.env.GEMINI_API_KEY,
+      model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
+    } : undefined),
   };
 }
 
@@ -73,7 +82,7 @@ export async function updateTenantSettings(input: { tenantId: string; actorId: s
     }
     if (!targetTenant) throw errors.not_found();
     const before = await readTenantSettings(targetTenant.id, tx);
-    const currentSettings = (targetTenant.settings as { palette?: unknown; smtp?: SmtpSettings; orgInfo?: OrgInfo }) || {};
+    const currentSettings = (targetTenant.settings as { palette?: unknown; smtp?: SmtpSettings; orgInfo?: OrgInfo; gemini?: GeminiSettings }) || {};
 
     let mergedSmtp: SmtpSettings | undefined = undefined;
     if (input.smtp) {
@@ -82,6 +91,16 @@ export async function updateTenantSettings(input: { tenantId: string; actorId: s
       mergedSmtp = {
         ...input.smtp,
         pass: finalPass,
+      };
+    }
+
+    let mergedGemini: GeminiSettings | undefined = undefined;
+    if (input.gemini) {
+      const existingKey = currentSettings.gemini?.apiKey || "";
+      const finalKey = input.gemini.apiKey !== undefined && input.gemini.apiKey !== "" ? input.gemini.apiKey : existingKey;
+      mergedGemini = {
+        apiKey: finalKey,
+        model: input.gemini.model || currentSettings.gemini?.model || "gemini-2.5-flash",
       };
     }
 
@@ -96,11 +115,22 @@ export async function updateTenantSettings(input: { tenantId: string; actorId: s
           palette: input.palette,
           ...(mergedSmtp !== undefined ? { smtp: mergedSmtp } : {}),
           ...(input.orgInfo !== undefined ? { orgInfo: input.orgInfo } : {}),
+          ...(mergedGemini !== undefined ? { gemini: mergedGemini } : {}),
         },
       },
     });
     await writeAudit({ tenantId: targetTenant.id, actorId: input.actorId, action: "tenant.settings_update", entity: "tenant", entityId: targetTenant.id, before, after: input }, tx);
   });
+}
+
+export async function getTenantGemini(tenantId?: string): Promise<GeminiSettings | undefined> {
+  const tid = tenantId || (await getDefaultTenantId());
+  if (!tid) return undefined;
+  const t = await prisma.tenant.findUnique({ where: { id: tid }, select: { settings: true } });
+  const s = t?.settings as { gemini?: GeminiSettings } | null;
+  const apiKey = s?.gemini?.apiKey || process.env.GEMINI_API_KEY || "";
+  const model = s?.gemini?.model || process.env.GEMINI_MODEL || "gemini-2.5-flash";
+  return apiKey ? { apiKey, model } : undefined;
 }
 
 export async function getTenantSmtp(tenantId?: string): Promise<SmtpSettings | undefined> {

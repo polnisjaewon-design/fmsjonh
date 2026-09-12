@@ -4,4 +4,5 @@ export {
   createArticleAction,
   updateArticleAction,
   deleteArticleAction,
+  translateNewsWithGeminiAction,
 } from "./_internal/actions";

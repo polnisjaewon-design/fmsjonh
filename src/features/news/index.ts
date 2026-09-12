@@ -25,3 +25,5 @@ export interface NewsCategoryDto {
   slug: string;
   articleCount?: number;
 }
+
+export type { TranslateNewsInput, TranslatedNewsResult } from "./_internal/validations";

@@ -7,7 +7,7 @@ import { errors } from "@/shared/lib/errors";
 import { P } from "../../permissions";
 import { requirePermission } from "../rbac";
 import { writeAudit } from "../audit";
-import { updateSettingsSchema, testSmtpSchema } from "../validations/settings";
+import { updateSettingsSchema, testSmtpSchema, testGeminiSchema } from "../validations/settings";
 import { prisma } from "@/shared/lib/infra/prisma";
 import { sendMail } from "@/shared/lib/infra/mailer";
 import { getTenantSettings, updateTenantSettings, type TenantSettings } from "../services/tenant.service";
@@ -118,6 +118,50 @@ export async function testSmtpAction(input: unknown): Promise<ActionResult<{ del
     }
 
     return { delivered: true };
+  });
+}
+
+export async function testGeminiAction(input: unknown): Promise<ActionResult<{ success: boolean; model: string }>> {
+  return runAction(async () => {
+    await requirePermission(P.settingsManage);
+    const locale = await getLocale();
+    const data = testGeminiSchema.parse(input, { error: zodErrorMap(locale) });
+    const apiKey = data.gemini.apiKey || process.env.GEMINI_API_KEY || "";
+    if (!apiKey) {
+      throw new Error("settings.geminiApiKeyRequired");
+    }
+    const model = data.gemini.model || "gemini-2.5-flash";
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+
+    const res = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [
+          {
+            role: "user",
+            parts: [{ text: "Hello Gemini! Reply with: OK" }],
+          },
+        ],
+        generationConfig: {
+          temperature: 0.1,
+          maxOutputTokens: 10,
+        },
+      }),
+    });
+
+    if (!res.ok) {
+      let errorMsg = `HTTP ${res.status} ${res.statusText}`;
+      try {
+        const errJson = await res.json();
+        if (errJson.error?.message) {
+          errorMsg = errJson.error.message;
+        }
+      } catch {}
+      throw new Error(errorMsg);
+    }
+
+    return { success: true, model };
   });
 }
 

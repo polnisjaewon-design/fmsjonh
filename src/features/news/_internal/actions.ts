@@ -7,7 +7,7 @@ import { zodErrorMap } from "@/shared/lib/i18n/zod-locale";
 import { requirePermission } from "@/features/identity/server";
 import { NEWS_P } from "../permissions";
 import type { NewsArticleDto, NewsCategoryDto } from "../index";
-import { createArticleSchema, updateArticleSchema, deleteArticleSchema } from "./validations";
+import { createArticleSchema, updateArticleSchema, deleteArticleSchema, translateNewsSchema, type TranslatedNewsResult } from "./validations";
 import {
   listAllAdminArticles,
   createArticle,
@@ -15,6 +15,7 @@ import {
   deleteArticle,
   listNewsCategories,
 } from "./services";
+import { translateNewsWithGemini } from "./gemini-translate.service";
 
 export async function getAdminArticlesAction(): Promise<ActionResult<NewsArticleDto[]>> {
   return runAction(async () => {
@@ -62,5 +63,16 @@ export async function deleteArticleAction(id: string): Promise<ActionResult<void
     await deleteArticle(ctx.tenantId, id);
     revalidatePath("/news");
     revalidatePath("/news-management");
+  });
+}
+
+export async function translateNewsWithGeminiAction(
+  input: unknown
+): Promise<ActionResult<TranslatedNewsResult>> {
+  return runAction(async () => {
+    const ctx = await requirePermission(NEWS_P.newsManage);
+    const locale = await getLocale();
+    const parsed = translateNewsSchema.parse(input, { error: zodErrorMap(locale) });
+    return translateNewsWithGemini(ctx.tenantId, parsed);
   });
 }
