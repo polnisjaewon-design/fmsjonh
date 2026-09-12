@@ -3,7 +3,7 @@ import type { Dictionary } from "@/shared/lib/i18n/translate";
 export const MESSAGES: Dictionary = {
   "faculty.title": { th: "คณาจารย์และบุคลากร", en: "Faculty & Staff" },
   "faculty.subtitle": { th: "คณาจารย์ผู้ทรงคุณวุฒิ พระวิปัสสนาจารย์ และบุคลากรประจำหลักสูตร", en: "Distinguished faculty members, Vipassana meditation masters, and program staff" },
-  "faculty.adminTitle": { th: "จัดการข้อมูลคณาจารย์และบุคลากร", en: "Manage Faculty & Staff" },
+  "faculty.adminTitle": { th: "บริหารจัดการบุคลากร", en: "Personnel Management" },
   "faculty.adminSubtitle": { th: "บันทึกและแก้ไขข้อมูลประวัติ สมณศักดิ์ ตำแหน่งวิชาการ และความเชี่ยวชาญ", en: "Manage profile, monastic rank, academic position, and expertise" },
   "faculty.vipassanaMasters": { th: "พระวิปัสสนาจารย์ประจำหลักสูตร", en: "Vipassana Meditation Masters" },
   "faculty.executives": { th: "คณะผู้บริหารหลักสูตร", en: "Program Executives" },

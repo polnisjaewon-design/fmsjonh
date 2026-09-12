@@ -51,7 +51,6 @@ export const sidebarGroups: NavGroup[] = [
       { title: "student.adminTitle", href: "/student-management", icon: Users, permission: STUDENT_P.studentRead },
       { title: "department.adminTitle", href: "/department-management", icon: Landmark, permission: DEPARTMENT_P.departmentRead },
       { title: "curriculum.adminTitle", href: "/curriculum-management", icon: BookOpen, permission: CURRICULUM_P.curriculumRead },
-      { title: "faculty.adminTitle", href: "/faculty-management", icon: GraduationCap, permission: FACULTY_P.facultyRead },
       { title: "petition.adminTitle", href: "/petition-management", icon: FileCheck, permission: PETITION_P.petitionRead },
       { title: "schedule.adminTitle", href: "/schedule-management", icon: Calendar, permission: SCHEDULE_P.scheduleRead },
       { title: "thesis.adminTitle", href: "/thesis-management", icon: BookMarked, permission: THESIS_P.thesisRead },
@@ -65,10 +64,11 @@ export const sidebarGroups: NavGroup[] = [
   {
     label: "nav.group.users",
     items: [{
-      title: "nav.users", href: "/users", icon: Users, permission: P.usersRead,
+      title: "nav.users", href: "/users", icon: Users,
       children: [
         { title: "nav.users", href: "/users", permission: P.usersRead },
         { title: "nav.roles", href: "/users/roles", permission: P.rolesManage },
+        { title: "faculty.adminTitle", href: "/faculty-management", icon: GraduationCap, permission: FACULTY_P.facultyRead },
       ],
     }],
   },
