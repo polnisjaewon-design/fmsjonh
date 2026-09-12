@@ -47,13 +47,27 @@ export const sidebarGroups: NavGroup[] = [
     label: "roles.module.curriculum",
     items: [
       { title: "news.adminTitle", href: "/news-management", icon: Newspaper, permission: NEWS_P.newsRead },
-      { title: "admission.adminTitle", href: "/admission-management", icon: UserCheck, permission: ADMISSION_P.admissionRead },
-      { title: "student.adminTitle", href: "/student-management", icon: Users, permission: STUDENT_P.studentRead },
-      { title: "department.adminTitle", href: "/department-management", icon: Landmark, permission: DEPARTMENT_P.departmentRead },
-      { title: "curriculum.adminTitle", href: "/curriculum-management", icon: BookOpen, permission: CURRICULUM_P.curriculumRead },
-      { title: "petition.adminTitle", href: "/petition-management", icon: FileCheck, permission: PETITION_P.petitionRead },
-      { title: "schedule.adminTitle", href: "/schedule-management", icon: Calendar, permission: SCHEDULE_P.scheduleRead },
-      { title: "thesis.adminTitle", href: "/thesis-management", icon: BookMarked, permission: THESIS_P.thesisRead },
+      {
+        title: "nav.academicManagement",
+        href: "/curriculum-management",
+        icon: BookOpen,
+        children: [
+          { title: "department.adminTitle", href: "/department-management", icon: Landmark, permission: DEPARTMENT_P.departmentRead },
+          { title: "curriculum.adminTitle", href: "/curriculum-management", icon: BookOpen, permission: CURRICULUM_P.curriculumRead },
+          { title: "schedule.adminTitle", href: "/schedule-management", icon: Calendar, permission: SCHEDULE_P.scheduleRead },
+          { title: "thesis.adminTitle", href: "/thesis-management", icon: BookMarked, permission: THESIS_P.thesisRead },
+        ],
+      },
+      {
+        title: "nav.studentAffairs",
+        href: "/student-management",
+        icon: UserCheck,
+        children: [
+          { title: "admission.adminTitle", href: "/admission-management", icon: UserCheck, permission: ADMISSION_P.admissionRead },
+          { title: "student.adminTitle", href: "/student-management", icon: Users, permission: STUDENT_P.studentRead },
+          { title: "petition.adminTitle", href: "/petition-management", icon: FileCheck, permission: PETITION_P.petitionRead },
+        ],
+      },
     ],
   },
 
