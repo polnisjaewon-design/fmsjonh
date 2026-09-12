@@ -41,7 +41,22 @@ async function testGroupedSidebar() {
       }
     }
 
-    console.log("[Step 2] ตรวจสอบกลุ่ม 'จัดการวิชาการและหลักสูตร'...");
+    console.log("[Step 2] ตรวจสอบกลุ่ม 'งานประชาสัมพันธ์และสื่อสารองค์กร'...");
+    const prBtn = page.locator(".ng button.ni:has-text('งานประชาสัมพันธ์และสื่อสารองค์กร'), .ng button.ni:has-text('Public Relations')").first();
+    const hasPR = await prBtn.isVisible();
+    console.log("  - เมนูหลัก 'งานประชาสัมพันธ์และสื่อสารองค์กร':", hasPR ? "✅ พบ" : "❌ ไม่พบ");
+    if (hasPR) {
+      const isExpanded = await prBtn.getAttribute("aria-expanded");
+      if (isExpanded !== "true") {
+        await prBtn.click();
+        await page.waitForTimeout(500);
+      }
+    }
+    const shotPR = path.join(artifactDir, "sidebar_grouped_pr_open.png");
+    await page.screenshot({ path: shotPR });
+    console.log("  📸 บันทึกภาพกลุ่มประชาสัมพันธ์และสื่อสารองค์กร:", shotPR);
+
+    console.log("[Step 3] ตรวจสอบกลุ่ม 'จัดการวิชาการและหลักสูตร'...");
     const academicBtn = page.locator(".ng button.ni:has-text('จัดการวิชาการและหลักสูตร'), .ng button.ni:has-text('Academic & Curriculums')").first();
     const hasAcademic = await academicBtn.isVisible();
     console.log("  - เมนูหลัก 'จัดการวิชาการและหลักสูตร':", hasAcademic ? "✅ พบ" : "❌ ไม่พบ");

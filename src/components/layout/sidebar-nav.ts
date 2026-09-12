@@ -46,7 +46,14 @@ export const sidebarGroups: NavGroup[] = [
   {
     label: "roles.module.curriculum",
     items: [
-      { title: "news.adminTitle", href: "/news-management", icon: Newspaper, permission: NEWS_P.newsRead },
+      {
+        title: "nav.prCommunications",
+        href: "/news-management",
+        icon: Newspaper,
+        children: [
+          { title: "news.adminTitle", href: "/news-management", permission: NEWS_P.newsRead },
+        ],
+      },
       {
         title: "nav.academicManagement",
         href: "/curriculum-management",
