@@ -1,4 +1,4 @@
-import { Award, Clock } from "lucide-react";
+import { Award, Clock, Landmark } from "lucide-react";
 import { getDefaultTenantId } from "@/features/identity/server";
 import { getActiveCurriculum } from "@/features/curriculum/server";
 
@@ -28,6 +28,15 @@ export default async function CurriculumPage() {
           <p className="text-stone-500 text-base sm:text-lg">{curriculum.nameEn}</p>
         )}
         <div className="flex flex-wrap gap-4 pt-2 text-xs sm:text-sm text-stone-600">
+          {curriculum?.departmentNameTh && (
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 font-medium">
+              <Landmark className="w-4 h-4 text-emerald-700" />
+              <span>
+                สังกัด: {curriculum.departmentNameTh}
+                {curriculum.facultyNameTh ? ` (${curriculum.facultyNameTh})` : ""}
+              </span>
+            </div>
+          )}
           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 font-medium">
             <Award className="w-4 h-4 text-amber-700" />
             <span>ชื่อปริญญา: {curriculum?.degreeTitleTh}</span>

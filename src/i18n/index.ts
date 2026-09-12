@@ -10,6 +10,7 @@ import { MESSAGES as student } from "@/features/student/messages";
 import { MESSAGES as petition } from "@/features/petition/messages";
 import { MESSAGES as schedule } from "@/features/schedule/messages";
 import { MESSAGES as thesis } from "@/features/thesis/messages";
+import { MESSAGES as department } from "@/features/department/messages";
 
 /** พจนานุกรม UI ทั้งระบบ — feature ใหม่เพิ่มบรรทัด import ที่นี่ · key ต้องไม่ซ้ำข้าม feature */
 export const UI_MESSAGES: Dictionary = {
@@ -17,6 +18,7 @@ export const UI_MESSAGES: Dictionary = {
   ...identity,
   ...sample,
   ...news,
+  ...department,
   ...curriculum,
   ...faculty,
   ...admission,

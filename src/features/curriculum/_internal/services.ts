@@ -5,6 +5,7 @@ export async function getActiveCurriculum(tenantId: string): Promise<CurriculumD
   const curr = await prisma.curriculum.findFirst({
     where: { tenantId, isActive: true },
     include: {
+      department: true,
       studyPlans: { orderBy: { createdAt: "asc" } },
       courses: { orderBy: { courseCode: "asc" } },
     },
@@ -22,6 +23,11 @@ export async function getActiveCurriculum(tenantId: string): Promise<CurriculumD
     totalCredits: curr.totalCredits,
     descriptionTh: curr.descriptionTh,
     descriptionEn: curr.descriptionEn,
+    departmentId: curr.departmentId,
+    departmentNameTh: curr.department?.nameTh ?? null,
+    departmentNameEn: curr.department?.nameEn ?? null,
+    facultyNameTh: curr.department?.facultyNameTh ?? null,
+    facultyNameEn: curr.department?.facultyNameEn ?? null,
     studyPlans: curr.studyPlans.map((sp) => ({
       id: sp.id,
       planType: sp.planType,

@@ -236,6 +236,12 @@ export function CurriculumAdminClient({
               <div>
                 <div className="text-xs text-amber-800 font-semibold uppercase">{curriculum.code}</div>
                 <div className="font-bold text-stone-900 text-sm leading-snug">{curriculum.nameTh}</div>
+                {curriculum.departmentNameTh && (
+                  <div className="text-xs text-emerald-800 font-medium mt-1">
+                    สังกัด: {curriculum.departmentNameTh}
+                    {curriculum.facultyNameTh ? ` (${curriculum.facultyNameTh})` : ""}
+                  </div>
+                )}
               </div>
             </div>
           </LiyonCard>

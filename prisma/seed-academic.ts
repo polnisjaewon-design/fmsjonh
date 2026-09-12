@@ -92,12 +92,103 @@ export async function seedAcademicData(prisma: PrismaClient, tenantId: string) {
     },
   });
 
+  // ๒.๕ สร้างภาควิชาและส่วนงาน (Departments & Academic Units)
+  const deptBuddhism = await prisma.department.upsert({
+    where: { tenantId_code: { tenantId, code: "DEPT-BUDDHISM" } },
+    update: {
+      nameTh: "ภาควิชาพระพุทธศาสนา",
+      nameEn: "Department of Buddhism",
+      facultyNameTh: "คณะพุทธศาสตร์",
+      facultyNameEn: "Faculty of Buddhism",
+      headName: "พระมหาดนัย ชิตมาโร (ดร.)",
+      contactEmail: "buddhism@mcu.ac.th",
+      contactPhone: "035-248-000 ต่อ 8100",
+      officeLocation: "อาคารเรียนรวม โซน B ชั้น ๓ มจร วังน้อย",
+      descriptionTh: "มุ่งเน้นการจัดการศึกษา วิจัย ค้นคว้า และบริการวิชาการด้านพระไตรปิฎก พระพุทธศาสนาเถรวาทและมหายาน",
+    },
+    create: {
+      tenantId,
+      code: "DEPT-BUDDHISM",
+      nameTh: "ภาควิชาพระพุทธศาสนา",
+      nameEn: "Department of Buddhism",
+      facultyNameTh: "คณะพุทธศาสตร์",
+      facultyNameEn: "Faculty of Buddhism",
+      headName: "พระมหาดนัย ชิตมาโร (ดร.)",
+      contactEmail: "buddhism@mcu.ac.th",
+      contactPhone: "035-248-000 ต่อ 8100",
+      officeLocation: "อาคารเรียนรวม โซน B ชั้น ๓ มจร วังน้อย",
+      descriptionTh: "มุ่งเน้นการจัดการศึกษา วิจัย ค้นคว้า และบริการวิชาการด้านพระไตรปิฎก พระพุทธศาสนาเถรวาทและมหายาน",
+      isActive: true,
+    },
+  });
+
+  await prisma.department.upsert({
+    where: { tenantId_code: { tenantId, code: "DEPT-REL-PHIL" } },
+    update: {
+      nameTh: "ภาควิชาศาสนาและปรัชญา",
+      nameEn: "Department of Religion and Philosophy",
+      facultyNameTh: "คณะพุทธศาสตร์",
+      facultyNameEn: "Faculty of Buddhism",
+      headName: "รศ.ดร.สุรศักดิ์ สุขวัฒน์",
+      contactEmail: "relphil@mcu.ac.th",
+      contactPhone: "035-248-000 ต่อ 8105",
+      officeLocation: "อาคารเรียนรวม โซน B ชั้น ๓ มจร วังน้อย",
+      descriptionTh: "ศึกษาเปรียบเทียบศาสนา ปรัชญาตะวันออกและตะวันตก",
+    },
+    create: {
+      tenantId,
+      code: "DEPT-REL-PHIL",
+      nameTh: "ภาควิชาศาสนาและปรัชญา",
+      nameEn: "Department of Religion and Philosophy",
+      facultyNameTh: "คณะพุทธศาสตร์",
+      facultyNameEn: "Faculty of Buddhism",
+      headName: "รศ.ดร.สุรศักดิ์ สุขวัฒน์",
+      contactEmail: "relphil@mcu.ac.th",
+      contactPhone: "035-248-000 ต่อ 8105",
+      officeLocation: "อาคารเรียนรวม โซน B ชั้น ๓ มจร วังน้อย",
+      descriptionTh: "ศึกษาเปรียบเทียบศาสนา ปรัชญาตะวันออกและตะวันตก",
+      isActive: true,
+    },
+  });
+
+  await prisma.department.upsert({
+    where: { tenantId_code: { tenantId, code: "VIPASSANA-INST" } },
+    update: {
+      nameTh: "สถาบันวิปัสสนาธุระ (ส่วนงานวิปัสสนาภาวนา)",
+      nameEn: "Vipassana Bhavana Academic Division",
+      facultyNameTh: "บัณฑิตวิทยาลัย / สถาบันวิปัสสนาธุระ",
+      facultyNameEn: "Graduate School / Vipassana Institute",
+      headName: "พระธรรมวัชราจารย์ (ผู้ช่วยเจ้าอาวาสวัดปากน้ำ)",
+      contactEmail: "vipassana@mcu.ac.th",
+      contactPhone: "035-248-000 ต่อ 8400",
+      officeLocation: "อาคาร ๗๒ พรรษา พระธรรมปัญญาบดี มจร วังน้อย",
+      descriptionTh: "ศูนย์กลางการศึกษา ค้นคว้า และส่งเสริมการปฏิบัติวิปัสสนากรรมฐานระดับสากล",
+    },
+    create: {
+      tenantId,
+      code: "VIPASSANA-INST",
+      nameTh: "สถาบันวิปัสสนาธุระ (ส่วนงานวิปัสสนาภาวนา)",
+      nameEn: "Vipassana Bhavana Academic Division",
+      facultyNameTh: "บัณฑิตวิทยาลัย / สถาบันวิปัสสนาธุระ",
+      facultyNameEn: "Graduate School / Vipassana Institute",
+      headName: "พระธรรมวัชราจารย์ (ผู้ช่วยเจ้าอาวาสวัดปากน้ำ)",
+      contactEmail: "vipassana@mcu.ac.th",
+      contactPhone: "035-248-000 ต่อ 8400",
+      officeLocation: "อาคาร ๗๒ พรรษา พระธรรมปัญญาบดี มจร วังน้อย",
+      descriptionTh: "ศูนย์กลางการศึกษา ค้นคว้า และส่งเสริมการปฏิบัติวิปัสสนากรรมฐานระดับสากล",
+      isActive: true,
+    },
+  });
+
   // ๓. สร้างหลักสูตร
   const curriculum = await prisma.curriculum.upsert({
     where: { tenantId_code: { tenantId, code: "MCU-MA-VIPASSANA-2567" } },
-    update: {},
+    update: {
+      departmentId: deptBuddhism.id,
+    },
     create: {
       tenantId,
+      departmentId: deptBuddhism.id,
       code: "MCU-MA-VIPASSANA-2567",
       nameTh: "หลักสูตรพุทธศาสตรมหาบัณฑิต สาขาวิชาวิปัสสนาภาวนาศึกษา (หลักสูตรปรับปรุง พ.ศ. ๒๕๖๗)",
       nameEn: "Master of Buddhism Program in Vipassana Meditation Studies (Revised 2024)",

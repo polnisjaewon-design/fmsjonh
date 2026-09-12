@@ -32,6 +32,11 @@ export interface CurriculumDto {
   totalCredits: number;
   descriptionTh?: string | null;
   descriptionEn?: string | null;
+  departmentId?: string | null;
+  departmentNameTh?: string | null;
+  departmentNameEn?: string | null;
+  facultyNameTh?: string | null;
+  facultyNameEn?: string | null;
   studyPlans: StudyPlanDto[];
   courses: CourseDto[];
 }

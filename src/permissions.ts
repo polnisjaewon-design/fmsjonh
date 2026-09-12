@@ -9,12 +9,14 @@ import { STUDENT_PERMISSIONS } from "@/features/student/permissions";
 import { PETITION_PERMISSIONS } from "@/features/petition/permissions";
 import { SCHEDULE_PERMISSIONS } from "@/features/schedule/permissions";
 import { THESIS_PERMISSIONS } from "@/features/thesis/permissions";
+import { DEPARTMENT_PERMISSIONS } from "@/features/department/permissions";
 
 /** สิทธิ์ทั้งระบบ — feature ใหม่เพิ่มบรรทัดที่นี่ · seed เขียนลง permissions ทุกครั้ง */
 export const ALL_PERMISSIONS: readonly PermissionDef[] = [
   ...IDENTITY_PERMISSIONS,
   ...SAMPLE_PERMISSIONS,
   ...NEWS_PERMISSIONS,
+  ...DEPARTMENT_PERMISSIONS,
   ...CURRICULUM_PERMISSIONS,
   ...FACULTY_PERMISSIONS,
   ...ADMISSION_PERMISSIONS,

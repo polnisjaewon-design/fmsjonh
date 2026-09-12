@@ -11,6 +11,7 @@ import {
   FileCheck,
   Calendar,
   BookMarked,
+  Landmark,
   type LucideIcon,
 } from "lucide-react";
 import { hasPermission, P } from "@/features/identity";
@@ -18,6 +19,7 @@ import { SAMPLE_P } from "@/features/sample";
 import { NEWS_P } from "@/features/news/permissions";
 import { ADMISSION_P } from "@/features/admission/permissions";
 import { STUDENT_P } from "@/features/student/permissions";
+import { DEPARTMENT_P } from "@/features/department/permissions";
 import { CURRICULUM_P } from "@/features/curriculum/permissions";
 import { FACULTY_P } from "@/features/faculty/permissions";
 import { PETITION_P } from "@/features/petition/permissions";
@@ -47,6 +49,7 @@ export const sidebarGroups: NavGroup[] = [
       { title: "news.adminTitle", href: "/news-management", icon: Newspaper, permission: NEWS_P.newsRead },
       { title: "admission.adminTitle", href: "/admission-management", icon: UserCheck, permission: ADMISSION_P.admissionRead },
       { title: "student.adminTitle", href: "/student-management", icon: Users, permission: STUDENT_P.studentRead },
+      { title: "department.adminTitle", href: "/department-management", icon: Landmark, permission: DEPARTMENT_P.departmentRead },
       { title: "curriculum.adminTitle", href: "/curriculum-management", icon: BookOpen, permission: CURRICULUM_P.curriculumRead },
       { title: "faculty.adminTitle", href: "/faculty-management", icon: GraduationCap, permission: FACULTY_P.facultyRead },
       { title: "petition.adminTitle", href: "/petition-management", icon: FileCheck, permission: PETITION_P.petitionRead },

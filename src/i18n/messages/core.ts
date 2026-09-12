@@ -4,6 +4,8 @@ export const MESSAGES: Dictionary = {
   "app.name": { th: "VibeCore", en: "VibeCore" },
   "app.tagline": { th: "ระบบบริหารจัดการองค์กร", en: "Enterprise Management Framework" },
   "common.save": { th: "บันทึก", en: "Save" },
+  "common.saving": { th: "กำลังบันทึก...", en: "Saving..." },
+  "common.edit": { th: "แก้ไข", en: "Edit" },
   "common.cancel": { th: "ยกเลิก", en: "Cancel" },
   "common.close": { th: "ปิด", en: "Close" },
   "common.confirm": { th: "ยืนยัน", en: "Confirm" },
