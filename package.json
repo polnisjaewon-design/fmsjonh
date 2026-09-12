@@ -22,10 +22,12 @@
     "db:migrate:dev": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
     "db:bootstrap": "tsx prisma/bootstrap.ts",
+    "db:backup": "bash scripts/db-backup.sh",
     "sync:liyon": "tsx scripts/sync-liyon-theme.ts",
     "build:mac": "bash scripts/build-mac-app.sh && bash scripts/build-dmg.sh",
     "postinstall": "prisma generate"
   },
+
 
   "dependencies": {
     "@prisma/adapter-pg": "6.19.3",
