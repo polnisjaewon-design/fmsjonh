@@ -37,9 +37,16 @@ export const MESSAGES: Dictionary = {
   "curriculum.departmentSelect": { th: "เลือกภาควิชาที่สังกัด", en: "Select Academic Department" },
   "curriculum.philosophy": { th: "ปรัชญาและจุดเน้นหลักสูตร (มคอ.๒)", en: "Curriculum Philosophy & Vision" },
   "curriculum.saveSuccess": { th: "บันทึกข้อมูลหลักสูตรเรียบร้อยแล้ว", en: "Curriculum saved successfully" },
+  "curriculum.exportJson": { th: "ส่งออก JSON", en: "Export JSON" },
+  "curriculum.exportJsonSuccess": { th: "ส่งออกไฟล์ JSON เรียบร้อยแล้ว", en: "Curriculum JSON exported successfully" },
+  "curriculum.importJson": { th: "นำเข้า JSON", en: "Import JSON" },
+  "curriculum.importJsonSuccess": { th: "นำเข้าข้อมูลจากไฟล์ JSON สำเร็จแล้ว (กรุณาตรวจสอบและกดบันทึก)", en: "Curriculum imported from JSON successfully (Please review and save)" },
+  "curriculum.importJsonError": { th: "ไฟล์ JSON ไม่ถูกต้อง หรือไม่ตรงตามโครงสร้างข้อมูลหลักสูตร", en: "Invalid JSON file or curriculum schema mismatch" },
+  "curriculum.jsonNotice": { th: "ส่งออกหรือนำเข้าข้อมูลหลักสูตรด้วยไฟล์ JSON", en: "Export or import curriculum specification via JSON" },
   "roles.module.curriculum": { th: "ระบบโครงสร้างหลักสูตร", en: "Curriculum & Courses" },
   "perm.curriculum:read": { th: "ดูข้อมูลโครงสร้างหลักสูตร", en: "View curriculum" },
   "perm.curriculum:manage": { th: "จัดการโครงสร้างหลักสูตร", en: "Manage curriculum" },
 };
+
 
 

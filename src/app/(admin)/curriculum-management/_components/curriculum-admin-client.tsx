@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { BookOpen, Plus, Edit, Trash2, Award, Layers, AlertCircle } from "lucide-react";
+import { useState, useTransition, useRef } from "react";
+import { BookOpen, Plus, Edit, Trash2, Award, Layers, AlertCircle, Download, Upload, FileCode2 } from "lucide-react";
+
 import { toast } from "sonner";
 import { useT } from "@/shared/lib/i18n/client";
 import {
@@ -66,7 +67,91 @@ export function CurriculumAdminClient({
   const [currDescriptionTh, setCurrDescriptionTh] = useState("");
   const [currDescriptionEn, setCurrDescriptionEn] = useState("");
 
+  const jsonFileInputRef = useRef<HTMLInputElement>(null);
+
+  function handleExportJson() {
+    const exportData = {
+      code: currCode || curriculum?.code || "",
+      nameTh: currNameTh || curriculum?.nameTh || "",
+      nameEn: currNameEn || curriculum?.nameEn || "",
+      degreeTitleTh: currDegreeTitleTh || curriculum?.degreeTitleTh || "",
+      degreeTitleEn: currDegreeTitleEn || curriculum?.degreeTitleEn || "",
+      totalCredits: currTotalCredits || curriculum?.totalCredits || 36,
+      departmentId: currDepartmentId || curriculum?.departmentId || null,
+      departmentNameTh: curriculum?.departmentNameTh ?? null,
+      facultyNameTh: curriculum?.facultyNameTh ?? null,
+      descriptionTh: currDescriptionTh || curriculum?.descriptionTh || null,
+      descriptionEn: currDescriptionEn || curriculum?.descriptionEn || null,
+      studyPlans: curriculum?.studyPlans || [],
+      courses: curriculum?.courses || [],
+      exportedAt: new Date().toISOString(),
+      schemaVersion: "1.0",
+    };
+
+    const jsonString = JSON.stringify(exportData, null, 2);
+    const blob = new Blob([jsonString], { type: "application/json;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `curriculum_${(currCode || "data").replace(/[^a-zA-Z0-9_-]/g, "_")}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success(t("curriculum.exportJsonSuccess"));
+  }
+
+  function handleImportJson(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const text = evt.target?.result as string;
+        const parsed = JSON.parse(text);
+
+        if (typeof parsed !== "object" || parsed === null) {
+          throw new Error("Invalid JSON structure");
+        }
+
+        if (!parsed.code && !parsed.nameTh && !parsed.nameEn && !parsed.degreeTitleTh) {
+          throw new Error("Missing curriculum fields");
+        }
+
+        if (parsed.code) setCurrCode(String(parsed.code));
+        if (parsed.nameTh) setCurrNameTh(String(parsed.nameTh));
+        if (parsed.nameEn !== undefined) setCurrNameEn(String(parsed.nameEn || ""));
+        if (parsed.degreeTitleTh) setCurrDegreeTitleTh(String(parsed.degreeTitleTh));
+        if (parsed.degreeTitleEn !== undefined) setCurrDegreeTitleEn(String(parsed.degreeTitleEn || ""));
+        if (parsed.totalCredits !== undefined && !isNaN(Number(parsed.totalCredits))) {
+          setCurrTotalCredits(Number(parsed.totalCredits));
+        }
+        if (parsed.departmentId && typeof parsed.departmentId === "string") {
+          setCurrDepartmentId(parsed.departmentId);
+        } else if (parsed.departmentNameTh && departments.length > 0) {
+          const found = departments.find((d) => d.nameTh === parsed.departmentNameTh);
+          if (found) setCurrDepartmentId(found.id);
+        }
+        if (parsed.descriptionTh !== undefined) setCurrDescriptionTh(String(parsed.descriptionTh || ""));
+        if (parsed.descriptionEn !== undefined) setCurrDescriptionEn(String(parsed.descriptionEn || ""));
+
+        toast.success(t("curriculum.importJsonSuccess"));
+      } catch {
+        toast.error(t("curriculum.importJsonError"));
+      } finally {
+        e.target.value = "";
+      }
+    };
+    reader.onerror = () => {
+      toast.error(t("curriculum.importJsonError"));
+      e.target.value = "";
+    };
+    reader.readAsText(file);
+  }
+
   function openEditCurriculum() {
+
     if (!curriculum) return;
     setCurrCode(curriculum.code);
     setCurrNameTh(curriculum.nameTh);
@@ -598,8 +683,46 @@ export function CurriculumAdminClient({
 
         <form onSubmit={handleSaveCurriculum}>
           <LiyonDialogBody className="space-y-4">
+            {/* JSON Import/Export Toolbar */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 rounded-lg bg-gradient-to-r from-amber-50 to-orange-50/50 border border-amber-200 text-xs">
+              <div className="flex items-center gap-2 text-amber-900 font-medium">
+                <FileCode2 className="w-4 h-4 text-amber-800 shrink-0" />
+                <span>{t("curriculum.jsonNotice")}</span>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <input
+                  type="file"
+                  ref={jsonFileInputRef}
+                  accept=".json,application/json"
+                  className="hidden"
+                  onChange={handleImportJson}
+                />
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => jsonFileInputRef.current?.click()}
+                  className="h-8 gap-1.5 border-amber-300 bg-white hover:bg-amber-100 text-amber-900 text-xs font-medium shadow-none"
+                >
+                  <Upload className="w-3.5 h-3.5" />
+                  {t("curriculum.importJson")}
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={handleExportJson}
+                  className="h-8 gap-1.5 border-amber-300 bg-white hover:bg-amber-100 text-amber-900 text-xs font-medium shadow-none"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  {t("curriculum.exportJson")}
+                </Button>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <LiyonField label={t("curriculum.code")} htmlFor="curr-code">
+
                 <input
                   id="curr-code"
                   className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm"
