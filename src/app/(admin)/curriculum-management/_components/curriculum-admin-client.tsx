@@ -25,13 +25,23 @@ import {
   updateCourseAction,
   deleteCourseAction,
   getCurriculumAction,
+  updateCurriculumAction,
 } from "@/features/curriculum/actions";
+
+export interface DepartmentOption {
+  id: string;
+  nameTh: string;
+  nameEn?: string | null;
+  facultyNameTh?: string | null;
+}
 
 export function CurriculumAdminClient({
   curriculum: initialCurriculum,
+  departments = [],
   canManage,
 }: {
   curriculum: CurriculumDto | null;
+  departments?: DepartmentOption[];
   canManage: boolean;
 }) {
   const t = useT();
@@ -41,10 +51,65 @@ export function CurriculumAdminClient({
 
   // Dialogs
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isEditCurriculumOpen, setIsEditCurriculumOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<CourseDto | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  // Form states
+  // Curriculum form states
+  const [currCode, setCurrCode] = useState("");
+  const [currNameTh, setCurrNameTh] = useState("");
+  const [currNameEn, setCurrNameEn] = useState("");
+  const [currDegreeTitleTh, setCurrDegreeTitleTh] = useState("");
+  const [currDegreeTitleEn, setCurrDegreeTitleEn] = useState("");
+  const [currTotalCredits, setCurrTotalCredits] = useState(36);
+  const [currDepartmentId, setCurrDepartmentId] = useState("");
+  const [currDescriptionTh, setCurrDescriptionTh] = useState("");
+  const [currDescriptionEn, setCurrDescriptionEn] = useState("");
+
+  function openEditCurriculum() {
+    if (!curriculum) return;
+    setCurrCode(curriculum.code);
+    setCurrNameTh(curriculum.nameTh);
+    setCurrNameEn(curriculum.nameEn || "");
+    setCurrDegreeTitleTh(curriculum.degreeTitleTh);
+    setCurrDegreeTitleEn(curriculum.degreeTitleEn || "");
+    setCurrTotalCredits(curriculum.totalCredits);
+    setCurrDepartmentId(curriculum.departmentId || "");
+    setCurrDescriptionTh(curriculum.descriptionTh || "");
+    setCurrDescriptionEn(curriculum.descriptionEn || "");
+    setIsEditCurriculumOpen(true);
+  }
+
+  function handleSaveCurriculum(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!curriculum) return;
+
+    startTransition(async () => {
+      const res = await updateCurriculumAction({
+        id: curriculum.id,
+        code: currCode,
+        nameTh: currNameTh,
+        nameEn: currNameEn,
+        degreeTitleTh: currDegreeTitleTh,
+        degreeTitleEn: currDegreeTitleEn,
+        totalCredits: currTotalCredits,
+        departmentId: currDepartmentId || null,
+        descriptionTh: currDescriptionTh || null,
+        descriptionEn: currDescriptionEn || null,
+        isActive: true,
+      });
+
+      if (res.ok) {
+        toast.success(t("curriculum.saveSuccess"));
+        setIsEditCurriculumOpen(false);
+        refresh();
+      } else {
+        toast.error(res.error.message);
+      }
+    });
+  }
+
+  // Course form states
   const [courseCode, setCourseCode] = useState("");
   const [nameTh, setNameTh] = useState("");
   const [nameEn, setNameEn] = useState("");
@@ -197,6 +262,7 @@ export function CurriculumAdminClient({
           CORE: { label: t("curriculum.typeCore"), tone: "info" },
           SPECIALIZED: { label: t("curriculum.typeSpecial"), tone: "ok" },
           PRACTICE_VIPASSANA: { label: t("curriculum.typeVipassana"), tone: "warn" },
+          ELECTIVE: { label: t("curriculum.typeElective"), tone: "ok" },
           THESIS: { label: t("curriculum.typeThesis"), tone: "bad" },
         };
         const conf = typeMap[row.courseType] || { label: row.courseType, tone: "off" };
@@ -213,36 +279,60 @@ export function CurriculumAdminClient({
           <p className="text-sm text-muted-foreground">{t("curriculum.adminSubtitle")}</p>
         </div>
         {canManage && (
-          <Button
-            onClick={() => {
-              resetForm();
-              setIsCreateOpen(true);
-            }}
-            className="bg-amber-800 hover:bg-amber-900 text-white gap-2 shadow-sm"
-          >
-            <Plus className="w-4 h-4" />
-            {t("curriculum.addCourse")}
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={openEditCurriculum}
+              className="gap-2 border-amber-800/40 text-amber-900 hover:bg-amber-50"
+            >
+              <Edit className="w-4 h-4 text-amber-800" />
+              {t("curriculum.editCurriculum")}
+            </Button>
+            <Button
+              onClick={() => {
+                resetForm();
+                setIsCreateOpen(true);
+              }}
+              className="bg-amber-800 hover:bg-amber-900 text-white gap-2 shadow-sm"
+            >
+              <Plus className="w-4 h-4" />
+              {t("curriculum.addCourse")}
+            </Button>
+          </div>
         )}
       </div>
 
       {curriculum && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <LiyonCard className="p-4 bg-gradient-to-br from-amber-50 to-orange-50/40 border-amber-200">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-amber-800 text-white flex items-center justify-center font-bold">
-                มคอ.๒
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-lg bg-amber-800 text-white flex items-center justify-center font-bold shrink-0">
+                  มคอ.๒
+                </div>
+                <div className="min-w-0">
+                  <div className="text-xs text-amber-800 font-semibold uppercase">{curriculum.code}</div>
+                  <div className="font-bold text-stone-900 text-sm leading-snug">{curriculum.nameTh}</div>
+                  {curriculum.departmentNameTh && (
+                    <div className="text-xs text-emerald-800 font-medium mt-1">
+                      สังกัด: {curriculum.departmentNameTh}
+                      {curriculum.facultyNameTh ? ` (${curriculum.facultyNameTh})` : ""}
+                    </div>
+                  )}
+                </div>
               </div>
-              <div>
-                <div className="text-xs text-amber-800 font-semibold uppercase">{curriculum.code}</div>
-                <div className="font-bold text-stone-900 text-sm leading-snug">{curriculum.nameTh}</div>
-                {curriculum.departmentNameTh && (
-                  <div className="text-xs text-emerald-800 font-medium mt-1">
-                    สังกัด: {curriculum.departmentNameTh}
-                    {curriculum.facultyNameTh ? ` (${curriculum.facultyNameTh})` : ""}
-                  </div>
-                )}
-              </div>
+              {canManage && (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={openEditCurriculum}
+                  className="h-8 text-xs text-amber-800 hover:text-amber-900 hover:bg-amber-100/60 shrink-0 px-2"
+                  title="แก้ไขข้อมูลหลักสูตร มคอ.๒"
+                >
+                  <Edit className="w-3.5 h-3.5 mr-1" />
+                  แก้ไข
+                </Button>
+              )}
             </div>
           </LiyonCard>
 
@@ -354,6 +444,7 @@ export function CurriculumAdminClient({
                   <option value="CORE">{t("curriculum.typeCore")}</option>
                   <option value="SPECIALIZED">{t("curriculum.typeSpecial")}</option>
                   <option value="PRACTICE_VIPASSANA">{t("curriculum.typeVipassana")}</option>
+                  <option value="ELECTIVE">{t("curriculum.typeElective")}</option>
                   <option value="THESIS">{t("curriculum.typeThesis")}</option>
                 </LiyonSelect>
               </LiyonField>
@@ -486,6 +577,159 @@ export function CurriculumAdminClient({
             {isPending ? "กำลังลบ..." : t("curriculum.deleteCourse")}
           </Button>
         </LiyonDialogFooter>
+      </LiyonDialog>
+
+      {/* Edit Curriculum Dialog */}
+      <LiyonDialog
+        open={isEditCurriculumOpen}
+        onOpenChange={(open: boolean) => !open && setIsEditCurriculumOpen(false)}
+        wide
+      >
+        <LiyonDialogCloseButton label={t("common.close")} />
+        <LiyonDialogHeader
+          title={
+            <span className="flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-amber-800" />
+              {t("curriculum.editCurriculum")}
+            </span>
+          }
+          description={t("curriculum.editCurriculumDesc")}
+        />
+
+        <form onSubmit={handleSaveCurriculum}>
+          <LiyonDialogBody className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <LiyonField label={t("curriculum.code")} htmlFor="curr-code">
+                <input
+                  id="curr-code"
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm"
+                  value={currCode}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrCode(e.target.value)}
+                  placeholder="เช่น 6742061"
+                  required
+                />
+              </LiyonField>
+
+              <LiyonField label={t("curriculum.totalCredits")} htmlFor="curr-credits">
+                <input
+                  id="curr-credits"
+                  type="number"
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm"
+                  min={1}
+                  value={currTotalCredits}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrTotalCredits(Number(e.target.value))}
+                  required
+                />
+              </LiyonField>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <LiyonField label={t("curriculum.nameTh")} htmlFor="curr-name-th">
+                <input
+                  id="curr-name-th"
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm"
+                  value={currNameTh}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrNameTh(e.target.value)}
+                  placeholder="เช่น หลักสูตรพุทธศาสตรมหาบัณฑิต สาขาวิชาวิปัสสนาภาวนาศึกษา"
+                  required
+                />
+              </LiyonField>
+
+              <LiyonField label={t("curriculum.nameEn")} htmlFor="curr-name-en">
+                <input
+                  id="curr-name-en"
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm"
+                  value={currNameEn}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrNameEn(e.target.value)}
+                  placeholder="e.g. Master of Buddhism in Vipassanabhavana Studies"
+                  required
+                />
+              </LiyonField>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <LiyonField label={t("curriculum.degreeThLabel")} htmlFor="curr-degree-th">
+                <input
+                  id="curr-degree-th"
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm"
+                  value={currDegreeTitleTh}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrDegreeTitleTh(e.target.value)}
+                  placeholder="เช่น พุทธศาสตรมหาบัณฑิต (วิปัสสนาภาวนาศึกษา)"
+                  required
+                />
+              </LiyonField>
+
+              <LiyonField label={t("curriculum.degreeEnLabel")} htmlFor="curr-degree-en">
+                <input
+                  id="curr-degree-en"
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm"
+                  value={currDegreeTitleEn}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrDegreeTitleEn(e.target.value)}
+                  placeholder="e.g. Master of Buddhism (Vipassanabhavana Studies)"
+                  required
+                />
+              </LiyonField>
+            </div>
+
+            <LiyonField label={t("curriculum.department")} htmlFor="curr-dept">
+              <select
+                id="curr-dept"
+                value={currDepartmentId}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setCurrDepartmentId(e.target.value)}
+                className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-amber-800/30"
+              >
+                <option value="">-- ไม่ระบุภาควิชา --</option>
+                {departments?.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.nameTh} {d.facultyNameTh ? `(${d.facultyNameTh})` : ""}
+                  </option>
+                ))}
+              </select>
+            </LiyonField>
+
+            <div className="space-y-4 pt-1">
+              <LiyonField label={t("curriculum.philosophy")} htmlFor="curr-desc-th">
+                <textarea
+                  id="curr-desc-th"
+                  rows={3}
+                  value={currDescriptionTh}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCurrDescriptionTh(e.target.value)}
+                  placeholder="ระบุปรัชญา วัตถุประสงค์ หรือจุดเน้นของหลักสูตรภาษาไทย"
+                  className="w-full text-sm bg-background border border-border rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-amber-800/30"
+                />
+              </LiyonField>
+
+              <LiyonField label="Philosophy & Description (English)" htmlFor="curr-desc-en">
+                <textarea
+                  id="curr-desc-en"
+                  rows={3}
+                  value={currDescriptionEn}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCurrDescriptionEn(e.target.value)}
+                  placeholder="Curriculum philosophy, vision, and objectives in English"
+                  className="w-full text-sm bg-background border border-border rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-amber-800/30"
+                />
+              </LiyonField>
+            </div>
+          </LiyonDialogBody>
+
+          <LiyonDialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsEditCurriculumOpen(false)}
+              disabled={isPending}
+            >
+              {t("common.cancel")}
+            </Button>
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="bg-amber-800 hover:bg-amber-900 text-white"
+            >
+              {isPending ? "กำลังบันทึก..." : t("common.save")}
+            </Button>
+          </LiyonDialogFooter>
+        </form>
       </LiyonDialog>
     </div>
   );

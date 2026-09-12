@@ -7,13 +7,26 @@ import { getLocale } from "@/shared/lib/i18n/server";
 import { zodErrorMap } from "@/shared/lib/i18n/zod-locale";
 import { CURRICULUM_P } from "../permissions";
 import type { CurriculumDto, CourseDto } from "../index";
-import { courseSchema, updateCourseSchema } from "./validations";
-import { getActiveCurriculum, createCourse, updateCourse, deleteCourse } from "./services";
+import { courseSchema, updateCourseSchema, updateCurriculumSchema } from "./validations";
+import { getActiveCurriculum, createCourse, updateCourse, deleteCourse, updateCurriculum } from "./services";
 
 export async function getCurriculumAction(): Promise<ActionResult<CurriculumDto | null>> {
   return runAction(async () => {
     const ctx = await requirePermission(CURRICULUM_P.curriculumRead);
     return getActiveCurriculum(ctx.tenantId);
+  });
+}
+
+export async function updateCurriculumAction(input: unknown): Promise<ActionResult<CurriculumDto>> {
+  return runAction(async () => {
+    const ctx = await requirePermission(CURRICULUM_P.curriculumManage);
+    const locale = await getLocale();
+    const parsed = updateCurriculumSchema.parse(input, { error: zodErrorMap(locale) });
+    const result = await updateCurriculum(ctx.tenantId, parsed);
+    revalidatePath("/curriculum");
+    revalidatePath("/curriculum-management");
+    revalidatePath("/academic-programs");
+    return result;
   });
 }
 

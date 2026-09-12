@@ -85,7 +85,7 @@ export async function createCourse(
     creditLecture?: number;
     creditLab?: number;
     creditSelf?: number;
-    courseType?: "BASIC" | "CORE" | "SPECIALIZED" | "PRACTICE_VIPASSANA" | "THESIS";
+    courseType?: "BASIC" | "CORE" | "SPECIALIZED" | "PRACTICE_VIPASSANA" | "ELECTIVE" | "THESIS";
     descriptionTh?: string | null;
     descriptionEn?: string | null;
   }
@@ -133,7 +133,7 @@ export async function updateCourse(
     creditLecture?: number;
     creditLab?: number;
     creditSelf?: number;
-    courseType?: "BASIC" | "CORE" | "SPECIALIZED" | "PRACTICE_VIPASSANA" | "THESIS";
+    courseType?: "BASIC" | "CORE" | "SPECIALIZED" | "PRACTICE_VIPASSANA" | "ELECTIVE" | "THESIS";
     descriptionTh?: string | null;
     descriptionEn?: string | null;
   }
@@ -174,5 +174,30 @@ export async function deleteCourse(tenantId: string, id: string): Promise<void> 
   await prisma.course.deleteMany({
     where: { id, tenantId },
   });
+}
+
+export async function updateCurriculum(
+  tenantId: string,
+  input: import("./validations").UpdateCurriculumInput
+): Promise<CurriculumDto> {
+  await prisma.curriculum.update({
+    where: { id: input.id, tenantId },
+    data: {
+      code: input.code,
+      nameTh: input.nameTh,
+      nameEn: input.nameEn,
+      degreeTitleTh: input.degreeTitleTh,
+      degreeTitleEn: input.degreeTitleEn,
+      totalCredits: input.totalCredits,
+      departmentId: input.departmentId ?? null,
+      descriptionTh: input.descriptionTh ?? null,
+      descriptionEn: input.descriptionEn ?? null,
+      isActive: input.isActive,
+    },
+  });
+
+  const active = await getActiveCurriculum(tenantId);
+  if (!active) throw new Error("Curriculum not found after update");
+  return active;
 }
 

@@ -1,5 +1,6 @@
 export {
   getCurriculumAction,
+  updateCurriculumAction,
   createCourseAction,
   updateCourseAction,
   deleteCourseAction,

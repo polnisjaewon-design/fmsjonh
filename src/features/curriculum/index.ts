@@ -40,3 +40,5 @@ export interface CurriculumDto {
   studyPlans: StudyPlanDto[];
   courses: CourseDto[];
 }
+
+export type { UpdateCurriculumInput } from "./_internal/validations";
