@@ -231,6 +231,45 @@ export function OrgInfoDialog({
                 />
               </LiyonField>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <LiyonField label={t("settings.orgOfficeHoursTh")} htmlFor="org-hours-th">
+                <input
+                  id="org-hours-th"
+                  value={data.officeHoursTh}
+                  onChange={(e) => setData({ ...data, officeHoursTh: e.target.value })}
+                  placeholder="เช่น วันเสาร์ - อาทิตย์ เวลา ๐๘:๓๐ - ๑๗:๐๐ น."
+                />
+              </LiyonField>
+              <LiyonField label={t("settings.orgOfficeHoursEn")} htmlFor="org-hours-en">
+                <input
+                  id="org-hours-en"
+                  value={data.officeHoursEn}
+                  onChange={(e) => setData({ ...data, officeHoursEn: e.target.value })}
+                  placeholder="e.g. Saturday - Sunday: 08:30 - 17:00"
+                />
+              </LiyonField>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <LiyonField label={t("settings.orgLineId")} htmlFor="org-line-id">
+                <input
+                  id="org-line-id"
+                  value={data.lineId}
+                  onChange={(e) => setData({ ...data, lineId: e.target.value })}
+                  placeholder="@mcuvipassana"
+                />
+              </LiyonField>
+              <LiyonField label={t("settings.orgFacebook")} htmlFor="org-fb">
+                <input
+                  id="org-fb"
+                  type="url"
+                  value={data.facebookUrl}
+                  onChange={(e) => setData({ ...data, facebookUrl: e.target.value })}
+                  placeholder="https://facebook.com/..."
+                />
+              </LiyonField>
+            </div>
           </div>
         )}
       </LiyonDialogBody>

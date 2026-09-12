@@ -39,6 +39,10 @@ export const orgInfoSchema = z.object({
   email: z.string().trim().max(255).default(""),
   phone: z.string().trim().max(100).default(""),
   website: z.string().trim().max(255).default(""),
+  officeHoursTh: z.string().trim().max(255).default(""),
+  officeHoursEn: z.string().trim().max(255).default(""),
+  lineId: z.string().trim().max(100).default(""),
+  facebookUrl: z.string().trim().max(255).default(""),
 });
 export type OrgInfo = z.infer<typeof orgInfoSchema>;
 

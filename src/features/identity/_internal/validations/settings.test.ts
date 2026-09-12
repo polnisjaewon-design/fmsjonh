@@ -102,6 +102,10 @@ describe("updateSettingsSchema", () => {
         email: "vipassana@mcu.ac.th",
         phone: "035-248-000",
         website: "https://www.mcu.ac.th",
+        officeHoursTh: "วันเสาร์ - อาทิตย์ เวลา ๐๘:๓๐ - ๑๗:๐๐ น.",
+        officeHoursEn: "Saturday - Sunday: 08:30 - 17:00",
+        lineId: "@mcuvipassana",
+        facebookUrl: "https://facebook.com/mcuvipassana",
       },
     });
     expect(res.success).toBe(true);
@@ -109,6 +113,9 @@ describe("updateSettingsSchema", () => {
       expect(res.data.orgInfo.taglineTh).toBe("ศูนย์กลางการศึกษาวิปัสสนาภาวนาระดับสากล");
       expect(res.data.orgInfo.email).toBe("vipassana@mcu.ac.th");
       expect(res.data.orgInfo.website).toBe("https://www.mcu.ac.th");
+      expect(res.data.orgInfo.officeHoursTh).toBe("วันเสาร์ - อาทิตย์ เวลา ๐๘:๓๐ - ๑๗:๐๐ น.");
+      expect(res.data.orgInfo.lineId).toBe("@mcuvipassana");
+      expect(res.data.orgInfo.facebookUrl).toBe("https://facebook.com/mcuvipassana");
     }
   });
 });

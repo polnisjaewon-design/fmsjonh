@@ -52,6 +52,10 @@ async function readTenantSettings(tenantId: string, db: Db): Promise<TenantSetti
       email: orgInfo.email || "",
       phone: orgInfo.phone || "",
       website: orgInfo.website || "",
+      officeHoursTh: orgInfo.officeHoursTh || "",
+      officeHoursEn: orgInfo.officeHoursEn || "",
+      lineId: orgInfo.lineId || "",
+      facebookUrl: orgInfo.facebookUrl || "",
     } : undefined,
   };
 }

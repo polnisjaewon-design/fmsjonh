@@ -56,6 +56,10 @@ export function SettingsForm({ initial }: { initial: TenantSettings }) {
     email: initial.orgInfo?.email ?? "",
     phone: initial.orgInfo?.phone ?? "",
     website: initial.orgInfo?.website ?? "",
+    officeHoursTh: initial.orgInfo?.officeHoursTh ?? "",
+    officeHoursEn: initial.orgInfo?.officeHoursEn ?? "",
+    lineId: initial.orgInfo?.lineId ?? "",
+    facebookUrl: initial.orgInfo?.facebookUrl ?? "",
   });
 
   const [smtp, setSmtp] = useState({
@@ -460,6 +464,163 @@ export function SettingsForm({ initial }: { initial: TenantSettings }) {
                   </span>
                 )}
               </div>
+            </div>
+          </div>
+        </LiyonCard>
+
+        {/* SECTION 2.5: Contact Information & Location (ข้อมูลการติดต่อและที่ตั้งสำนักงาน สำหรับแสดงบน Portal) */}
+        <LiyonCard>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-border/50 gap-2">
+            <div>
+              <div className="flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-brand" />
+                <h2 className="text-lg font-semibold tracking-tight">{t("settings.contactCardTitle")}</h2>
+              </div>
+              <p className="text-sm text-muted-foreground mt-1">
+                {t("settings.contactCardDesc")}
+              </p>
+            </div>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-brand/10 text-brand text-xs font-medium self-start sm:self-auto">
+              <Sparkles className="w-3.5 h-3.5 text-brand" />
+              <span>แสดงผลอัตโนมัติบน Portal</span>
+            </div>
+          </div>
+
+          <div className="space-y-4 pt-2">
+            {/* ที่อยู่ TH / EN */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <LiyonField
+                label={t("settings.orgAddressTh")}
+                htmlFor="s-address-th"
+                hint="ที่อยู่สำนักงานสำหรับแสดงผลที่ Footer และหน้าติดต่อ"
+              >
+                <textarea
+                  id="s-address-th"
+                  rows={2}
+                  value={orgInfo.addressTh}
+                  onChange={(e) => setOrgInfo({ ...orgInfo, addressTh: e.target.value })}
+                  placeholder="เช่น อาคารมหาจุฬาบรรณาคาร มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย ต.ลำไทร อ.วังน้อย จ.พระนครศรีอยุธยา ๑๓๑๗๐"
+                  className="w-full text-sm bg-background border border-border rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-brand/40"
+                />
+              </LiyonField>
+
+              <LiyonField
+                label={t("settings.orgAddressEn")}
+                htmlFor="s-address-en"
+                hint="Official Office Address in English"
+              >
+                <textarea
+                  id="s-address-en"
+                  rows={2}
+                  value={orgInfo.addressEn}
+                  onChange={(e) => setOrgInfo({ ...orgInfo, addressEn: e.target.value })}
+                  placeholder="e.g. Mahachulalongkornrajavidyalaya University, Wang Noi, Phra Nakhon Si Ayutthaya 13170 Thailand"
+                  className="w-full text-sm bg-background border border-border rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-brand/40"
+                />
+              </LiyonField>
+            </div>
+
+            {/* โทรศัพท์ / อีเมล / เว็บไซต์ */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <LiyonField
+                label={t("settings.orgPhone")}
+                htmlFor="s-org-phone"
+                hint="เบอร์โทรศัพท์ติดต่อหรือต่อสายตรง"
+              >
+                <input
+                  id="s-org-phone"
+                  value={orgInfo.phone}
+                  onChange={(e) => setOrgInfo({ ...orgInfo, phone: e.target.value })}
+                  placeholder="เช่น ๐๓๕-๒๔๘-๐๐๐ ต่อ ๘๐๕๐"
+                />
+              </LiyonField>
+
+              <LiyonField
+                label={t("settings.orgEmail")}
+                htmlFor="s-org-email"
+                hint="อีเมลสำหรับติดต่อสอบถามทางการ"
+              >
+                <input
+                  id="s-org-email"
+                  type="email"
+                  value={orgInfo.email}
+                  onChange={(e) => setOrgInfo({ ...orgInfo, email: e.target.value })}
+                  placeholder="เช่น vipassana@mcu.ac.th"
+                />
+              </LiyonField>
+
+              <LiyonField
+                label={t("settings.orgWebsite")}
+                htmlFor="s-org-website"
+                hint="เว็บไซต์ทางการของหลักสูตร / สถาบัน"
+              >
+                <input
+                  id="s-org-website"
+                  type="url"
+                  value={orgInfo.website}
+                  onChange={(e) => setOrgInfo({ ...orgInfo, website: e.target.value })}
+                  placeholder="เช่น https://www.mcu.ac.th"
+                />
+              </LiyonField>
+            </div>
+
+            {/* เวลาทำการ TH / EN */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <LiyonField
+                label={t("settings.orgOfficeHoursTh")}
+                htmlFor="s-hours-th"
+                hint="วันและเวลาเปิดทำการสำหรับติดต่อ (ภาษาไทย)"
+              >
+                <input
+                  id="s-hours-th"
+                  value={orgInfo.officeHoursTh}
+                  onChange={(e) => setOrgInfo({ ...orgInfo, officeHoursTh: e.target.value })}
+                  placeholder="เช่น วันเสาร์ - อาทิตย์ เวลา ๐๘:๓๐ - ๑๗:๐๐ น."
+                />
+              </LiyonField>
+
+              <LiyonField
+                label={t("settings.orgOfficeHoursEn")}
+                htmlFor="s-hours-en"
+                hint="Office Operating Hours (English)"
+              >
+                <input
+                  id="s-hours-en"
+                  value={orgInfo.officeHoursEn}
+                  onChange={(e) => setOrgInfo({ ...orgInfo, officeHoursEn: e.target.value })}
+                  placeholder="e.g. Saturday - Sunday: 08:30 - 17:00"
+                />
+              </LiyonField>
+            </div>
+
+            {/* โซเชียลมีเดีย: LINE ID & Facebook */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <LiyonField
+                label={t("settings.orgLineId")}
+                htmlFor="s-line-id"
+                hint="LINE Official Account ID เช่น @mcuvipassana"
+              >
+                <input
+                  id="s-line-id"
+                  value={orgInfo.lineId}
+                  onChange={(e) => setOrgInfo({ ...orgInfo, lineId: e.target.value })}
+                  placeholder="@mcuvipassana"
+                />
+              </LiyonField>
+
+              <LiyonField
+                label={t("settings.orgFacebook")}
+                htmlFor="s-facebook-url"
+                hint="ลิงก์ Facebook Fanpage ทางการ"
+              >
+                <input
+                  id="s-facebook-url"
+                  type="url"
+                  value={orgInfo.facebookUrl}
+                  onChange={(e) => setOrgInfo({ ...orgInfo, facebookUrl: e.target.value })}
+                  placeholder="https://facebook.com/..."
+                />
+              </LiyonField>
             </div>
           </div>
         </LiyonCard>

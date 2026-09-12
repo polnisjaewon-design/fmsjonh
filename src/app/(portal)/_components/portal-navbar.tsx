@@ -20,6 +20,7 @@ import {
   User as UserIcon,
   Settings,
   LogOut,
+  MapPin,
 } from "lucide-react";
 import { useLocale } from "@/shared/lib/i18n/client";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
@@ -111,6 +112,7 @@ export function PortalNavbar({
     { href: "/schedules", label: locale === "th" ? "ตารางเรียน" : "Timetable", icon: BookOpen },
     { href: "/theses", label: locale === "th" ? "คลังวิทยานิพนธ์" : "Theses", icon: GraduationCap },
     { href: "/petitions", label: locale === "th" ? "คำร้องออนไลน์" : "Petitions", icon: Newspaper },
+    { href: "/contact", label: locale === "th" ? "ติดต่อเรา" : "Contact", icon: MapPin },
   ];
 
   return (

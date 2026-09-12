@@ -11,6 +11,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useLocale } from "@/shared/lib/i18n/client";
+import type { OrgInfo } from "@/features/identity";
 
 export interface PortalFooterProps {
   logoUrl?: string | null;
@@ -18,6 +19,7 @@ export interface PortalFooterProps {
   nameEn?: string | null;
   taglineTh?: string | null;
   taglineEn?: string | null;
+  orgInfo?: OrgInfo | null;
 }
 
 export function PortalFooter({
@@ -26,6 +28,7 @@ export function PortalFooter({
   nameEn,
   taglineTh,
   taglineEn,
+  orgInfo,
 }: PortalFooterProps = {}) {
   const locale = useLocale();
   const currentYear = new Date().getFullYear();
@@ -60,6 +63,7 @@ export function PortalFooter({
   const serviceLinks = [
     { href: "/dashboard", labelTh: "ระบบจัดการ (Console)", labelEn: "Staff Console", external: false },
     { href: "/petitions", labelTh: "ยื่นคำร้องออนไลน์", labelEn: "Student Petitions", external: false },
+    { href: "/contact", labelTh: "ติดต่อเราและแผนที่ตั้ง", labelEn: "Contact & Location", external: false },
     { href: "/me", labelTh: "ข้อมูลส่วนบุคคล", labelEn: "User Profile", external: false },
     { href: "https://www.mcu.ac.th", labelTh: "มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย", labelEn: "MCU Main Portal", external: true },
     { href: "https://grad.mcu.ac.th", labelTh: "บัณฑิตวิทยาลัย มจร", labelEn: "MCU Graduate School", external: true },
@@ -180,25 +184,73 @@ export function PortalFooter({
                 <MapPin className="w-4 h-4 text-brand-light shrink-0 mt-0.5" />
                 <span>
                   {locale === "en"
-                    ? "Mahachulalongkornrajavidyalaya University, Wang Noi, Phra Nakhon Si Ayutthaya 13170 Thailand"
-                    : "อาคารมหาจุฬาบรรณาคาร มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย ต.ลำไทร อ.วังน้อย จ.พระนครศรีอยุธยา ๑๓๑๗๐"}
+                    ? orgInfo?.addressEn || orgInfo?.addressTh || "Mahachulalongkornrajavidyalaya University, Wang Noi, Phra Nakhon Si Ayutthaya 13170 Thailand"
+                    : orgInfo?.addressTh || orgInfo?.addressEn || "อาคารมหาจุฬาบรรณาคาร มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย ต.ลำไทร อ.วังน้อย จ.พระนครศรีอยุธยา ๑๓๑๗๐"}
                 </span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-brand-light shrink-0" />
-                <span>๐๓๕-๒๔๘-๐๐๐ ต่อ ๘๐๕๐</span>
+                <span>{orgInfo?.phone || "๐๓๕-๒๔๘-๐๐๐ ต่อ ๘๐๕๐"}</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-brand-light shrink-0" />
-                <span>vipassana@mcu.ac.th</span>
+                <a
+                  href={`mailto:${orgInfo?.email || "vipassana@mcu.ac.th"}`}
+                  className="hover:underline hover:text-[var(--ink-band-text)] transition-colors"
+                >
+                  {orgInfo?.email || "vipassana@mcu.ac.th"}
+                </a>
               </li>
               <li className="flex items-start gap-2.5 pt-1">
                 <Clock className="w-4 h-4 text-brand-light shrink-0 mt-0.5" />
                 <span>
                   {locale === "en"
-                    ? "Saturday - Sunday: 08:30 - 17:00"
-                    : "วันเสาร์ - อาทิตย์ เวลา ๐๘:๓๐ - ๑๗:๐๐ น."}
+                    ? orgInfo?.officeHoursEn || orgInfo?.officeHoursTh || "Saturday - Sunday: 08:30 - 17:00"
+                    : orgInfo?.officeHoursTh || orgInfo?.officeHoursEn || "วันเสาร์ - อาทิตย์ เวลา ๐๘:๓๐ - ๑๗:๐๐ น."}
                 </span>
+              </li>
+
+              {/* Social & Official Channels */}
+              {(orgInfo?.lineId || orgInfo?.facebookUrl || orgInfo?.website) && (
+                <li className="flex flex-wrap items-center gap-2 pt-2 border-t border-white/10">
+                  {orgInfo.lineId && (
+                    <span className="inline-flex items-center gap-1 text-[11px] bg-emerald-950/60 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/30">
+                      LINE: {orgInfo.lineId}
+                    </span>
+                  )}
+                  {orgInfo.facebookUrl && (
+                    <a
+                      href={orgInfo.facebookUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-[11px] bg-blue-950/60 text-blue-300 hover:text-blue-200 px-2 py-0.5 rounded border border-blue-500/30 transition-colors"
+                    >
+                      Facebook
+                      <ExternalLink className="w-2.5 h-2.5" />
+                    </a>
+                  )}
+                  {orgInfo.website && (
+                    <a
+                      href={orgInfo.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-[11px] bg-amber-950/60 text-amber-300 hover:text-amber-200 px-2 py-0.5 rounded border border-amber-500/30 transition-colors"
+                    >
+                      Website
+                      <ExternalLink className="w-2.5 h-2.5" />
+                    </a>
+                  )}
+                </li>
+              )}
+
+              {/* Direct Link to /contact page */}
+              <li className="pt-1.5">
+                <Link
+                  href="/contact"
+                  className="text-xs text-brand-light hover:underline inline-flex items-center gap-1 font-medium"
+                >
+                  <span>{locale === "en" ? "View full contact info & map →" : "ดูแผนที่และช่องทางติดต่อทั้งหมด →"}</span>
+                </Link>
               </li>
             </ul>
           </div>

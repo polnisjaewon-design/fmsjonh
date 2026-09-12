@@ -21,6 +21,7 @@ export default async function PortalLayout({ children }: { children: React.React
         nameEn={settings?.nameEn}
         taglineTh={settings?.orgInfo?.taglineTh}
         taglineEn={settings?.orgInfo?.taglineEn}
+        orgInfo={settings?.orgInfo}
       />
     </div>
   );
