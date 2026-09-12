@@ -58,6 +58,7 @@ export function FacultyAdminClient({
   const [educationHistory, setEducationHistory] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
   const [sortOrder, setSortOrder] = useState(0);
 
   function resetForm() {
@@ -76,6 +77,7 @@ export function FacultyAdminClient({
     setEducationHistory("");
     setEmail("");
     setPhone("");
+    setAvatarUrl("");
     setSortOrder(0);
   }
 
@@ -96,6 +98,7 @@ export function FacultyAdminClient({
     setEducationHistory(m.educationHistory || "");
     setEmail(m.email || "");
     setPhone(m.phone || "");
+    setAvatarUrl(m.avatarUrl || "");
     setSortOrder(m.sortOrder);
   }
 
@@ -120,6 +123,7 @@ export function FacultyAdminClient({
           educationHistory: educationHistory || null,
           email: email || null,
           phone: phone || null,
+          avatarUrl: avatarUrl.trim() || null,
           sortOrder,
         });
 
@@ -147,6 +151,7 @@ export function FacultyAdminClient({
           educationHistory: educationHistory || null,
           email: email || null,
           phone: phone || null,
+          avatarUrl: avatarUrl.trim() || null,
           sortOrder,
         });
 
@@ -185,17 +190,31 @@ export function FacultyAdminClient({
       key: "name",
       header: "ชื่อ - ฉายา / สมณศักดิ์",
       render: (row) => (
-        <div>
-          {row.monasticRank && (
-            <div className="text-xs font-semibold text-amber-900 mb-0.5">{row.monasticRank}</div>
-          )}
-          <div className="font-semibold text-stone-900">{row.fullNameTh}</div>
-          {row.templeName && (
-            <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
-              <Building2 className="w-3 h-3 text-amber-700" />
-              <span>{row.templeName}</span>
-            </div>
-          )}
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-amber-50 border border-amber-200 overflow-hidden shrink-0 flex items-center justify-center shadow-xs">
+            {row.avatarUrl ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={row.avatarUrl}
+                alt={row.fullNameTh}
+                className="w-full h-full object-cover object-top"
+              />
+            ) : (
+              <Users className="w-5 h-5 text-amber-700" />
+            )}
+          </div>
+          <div>
+            {row.monasticRank && (
+              <div className="text-xs font-semibold text-amber-900 mb-0.5">{row.monasticRank}</div>
+            )}
+            <div className="font-semibold text-stone-900">{row.fullNameTh}</div>
+            {row.templeName && (
+              <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
+                <Building2 className="w-3 h-3 text-amber-700" />
+                <span>{row.templeName}</span>
+              </div>
+            )}
+          </div>
         </div>
       ),
     },
@@ -501,6 +520,40 @@ export function FacultyAdminClient({
                   placeholder="08X-XXX-XXXX"
                 />
               </LiyonField>
+
+              <div className="md:col-span-2">
+                <LiyonField label="รูปภาพประจำตัว (URL รูปภาพ)">
+                  <div className="flex gap-4 items-center">
+                    <div className="w-14 h-14 rounded-full bg-stone-100 border border-stone-300 overflow-hidden shrink-0 flex items-center justify-center shadow-inner">
+                      {avatarUrl.trim() ? (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img
+                          src={avatarUrl.trim()}
+                          alt="Avatar Preview"
+                          className="w-full h-full object-cover object-top"
+                          onError={(e) => {
+                            (e.target as HTMLElement).style.display = "none";
+                          }}
+                        />
+                      ) : (
+                        <Users className="w-7 h-7 text-stone-400" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <input
+                        type="url"
+                        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm"
+                        value={avatarUrl}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAvatarUrl(e.target.value)}
+                        placeholder="https://fb.mcu.ac.th/wp-content/uploads/..."
+                      />
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        ลิงก์รูปภาพโดยตรงจากเว็บไซต์คณะพุทธศาสตร์ มจร (fb.mcu.ac.th) หรือ URL รูปภาพออนไลน์
+                      </p>
+                    </div>
+                  </div>
+                </LiyonField>
+              </div>
             </div>
           </LiyonDialogBody>
           <LiyonDialogFooter>

@@ -13,6 +13,7 @@ import {
   Layers,
   Search,
   Users,
+  ExternalLink,
 } from "lucide-react";
 import type { CurriculumDto } from "@/features/curriculum";
 
@@ -58,20 +59,57 @@ export function CurriculumPortalClient({ curriculum }: CurriculumPortalClientPro
     {
       name: "พระมหายุทธนา นรเชฏฺโฐ, รศ.ดร.",
       position: "ประธานคณะกรรมการบริหารหลักสูตร",
+      office: "หัวหน้าภาควิชาพระพุทธศาสนา คณะพุทธศาสตร์ มจร",
       degree: "พธ.ด. (พระพุทธศาสนา), พธ.ม. (พระพุทธศาสนา), พธ.บ. (พระพุทธศาสนา), ป.ธ.๙",
       expertise: "พระไตรปิฎกศึกษา, พระพุทธศาสนาเถรวาท, วิปัสสนาภาวนา",
+      imageUrl: "https://fb.mcu.ac.th/wp-content/uploads/2026/03/PmYuttana6901.png",
+      profileUrl: "https://fb.mcu.ac.th/?p=793",
+      roleBadge: "ประธานหลักสูตร",
+      badgeColor: "bg-amber-100 text-amber-900 border-amber-300",
     },
     {
       name: "พระครูภาวนาวัฒนบัณฑิต วิ., ผศ.ดร.",
       position: "กรรมการและเลขานุการหลักสูตร",
+      office: "อาจารย์ประจำภาควิชาพระพุทธศาสนา คณะพุทธศาสตร์ มจร",
       degree: "พธ.ด. (วิปัสสนาภาวนา), พธ.ม. (พระพุทธศาสนา), ศศ.บ. (ภาษาอังกฤษ), น.ธ.เอก",
       expertise: "สติปัฏฐาน ๔, การสอบอารมณ์วิปัสสนากรรมฐาน, วิสุทธิมรรค",
+      imageUrl: "https://fb.mcu.ac.th/wp-content/uploads/2026/04/951813001_09.png",
+      profileUrl: "https://fb.mcu.ac.th/?p=928",
+      roleBadge: "กรรมการและเลขานุการ",
+      badgeColor: "bg-blue-100 text-blue-900 border-blue-300",
     },
     {
       name: "พระมหายงยุทธ ธีรธมฺโม, ดร.",
       position: "อาจารย์ผู้รับผิดชอบหลักสูตร",
+      office: "ผู้ช่วยศาสตราจารย์ประจำภาควิชาพระพุทธศาสนา คณะพุทธศาสตร์ มจร",
       degree: "พธ.ด. (พระพุทธศาสนา), อ.ม. (ภาษาบาลีและสันสกฤต), พธ.บ. (ภาษาบาลี), ป.ธ.๙",
       expertise: "คัมภีร์อภิธรรม, พระอภิธัมมัตถสังคหะ, ภาษาบาลีเพื่อการวิจัย",
+      imageUrl: "https://fb.mcu.ac.th/wp-content/uploads/2026/03/yongyut6901.png",
+      profileUrl: "https://fb.mcu.ac.th/?p=959",
+      roleBadge: "อาจารย์ผู้รับผิดชอบหลักสูตร",
+      badgeColor: "bg-stone-100 text-stone-800 border-stone-300",
+    },
+    {
+      name: "รศ.ดร.สุเทพ พรมเลิศ",
+      position: "อาจารย์ผู้รับผิดชอบหลักสูตร",
+      office: "รองหัวหน้าภาควิชาพระพุทธศาสนา คณะพุทธศาสตร์ มจร",
+      degree: "พธ.ด. (พระพุทธศาสนา), พธ.ม. (พระพุทธศาสนา), พธ.บ. (พระพุทธศาสนา)",
+      expertise: "ปรัชญาพระพุทธศาสนา, จริยศาสตร์เชิงพุทธ, พระไตรปิฎกศึกษา",
+      imageUrl: "https://fb.mcu.ac.th/wp-content/uploads/2026/03/AccSutep6901.png",
+      profileUrl: "https://fb.mcu.ac.th/?p=998",
+      roleBadge: "อาจารย์ผู้รับผิดชอบหลักสูตร",
+      badgeColor: "bg-stone-100 text-stone-800 border-stone-300",
+    },
+    {
+      name: "พระมหาราชัน จิตฺตปาโล, ดร.",
+      position: "อาจารย์ผู้รับผิดชอบหลักสูตร",
+      office: "ผู้ช่วยอธิการบดีฝ่ายกิจการนิสิต / อาจารย์ประจำภาควิชาพระพุทธศาสนา มจร",
+      degree: "พธ.ด. (พระพุทธศาสนา), พธ.ม. (พระพุทธศาสนา), พธ.บ. (พระพุทธศาสนา)",
+      expertise: "พระพุทธศาสนาเถรวาท, ธรรมนิเทศ, การพัฒนาจิตตภาวนา",
+      imageUrl: "https://fb.mcu.ac.th/wp-content/uploads/2026/03/a3PmRashun6901.png",
+      profileUrl: "https://fb.mcu.ac.th/?p=11005",
+      roleBadge: "อาจารย์ผู้รับผิดชอบหลักสูตร",
+      badgeColor: "bg-stone-100 text-stone-800 border-stone-300",
     },
   ];
 
@@ -461,32 +499,105 @@ export function CurriculumPortalClient({ curriculum }: CurriculumPortalClientPro
       )}
 
       {activeTab === "committee" && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {committeeMembers.map((m, idx) => (
-              <div
-                key={idx}
-                className="bg-white rounded-2xl p-6 border border-stone-200 shadow-xs space-y-4 hover:border-amber-400/80 transition-all"
-              >
-                <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-900 flex items-center justify-center font-bold text-lg font-serif">
-                  {idx + 1}
-                </div>
-                <div>
-                  <h4 className="font-bold text-stone-900 text-base">{m.name}</h4>
-                  <div className="text-xs font-semibold text-amber-800 mt-1">{m.position}</div>
-                </div>
-                <div className="space-y-2 text-xs text-stone-600 border-t pt-3">
-                  <div>
-                    <span className="font-bold text-stone-700">คุณวุฒิการศึกษา:</span>
-                    <p className="mt-0.5">{m.degree}</p>
-                  </div>
-                  <div>
-                    <span className="font-bold text-stone-700">ความเชี่ยวชาญ:</span>
-                    <p className="mt-0.5">{m.expertise}</p>
-                  </div>
-                </div>
+        <div className="space-y-8">
+          {/* Header Attribution & Link to Official Faculty Website */}
+          <div className="p-6 rounded-2xl bg-gradient-to-r from-amber-50 via-stone-50 to-amber-50/40 border border-amber-200/80 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 text-amber-900 font-serif font-bold text-lg">
+                <Users className="w-5 h-5 text-amber-800 shrink-0" />
+                <span>อาจารย์ผู้รับผิดชอบหลักสูตร (๕ ท่าน)</span>
               </div>
-            ))}
+              <p className="text-xs sm:text-sm text-stone-600">
+                หลักสูตรพุทธศาสตรมหาบัณฑิต สาขาวิชาวิปัสสนาภาวนาศึกษา ภาควิชาพระพุทธศาสนา คณะพุทธศาสตร์ มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย
+              </p>
+            </div>
+            <a
+              href="https://fb.mcu.ac.th/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-800 hover:bg-amber-900 text-white text-xs sm:text-sm font-semibold shadow-sm hover:shadow transition-all shrink-0"
+            >
+              <span>เว็บไซต์คณะพุทธศาสตร์ fb.mcu.ac.th</span>
+              <ExternalLink className="w-4 h-4" />
+            </a>
+          </div>
+
+          {/* Committee Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {committeeMembers.map((m, idx) => {
+              const thaiNumbers = ["๑", "๒", "๓", "๔", "๕"];
+              return (
+                <div
+                  key={idx}
+                  className="group bg-white rounded-2xl p-5 border border-stone-200 hover:border-amber-400 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
+                >
+                  <div className="space-y-4">
+                    {/* Instructor Portrait Image */}
+                    <div className="relative aspect-[4/3] w-full rounded-xl overflow-hidden bg-stone-100 border border-stone-200/80 shadow-inner">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={m.imageUrl}
+                        alt={m.name}
+                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                      />
+                      {/* Index Tag */}
+                      <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-stone-900/70 backdrop-blur-xs text-white text-xs font-serif font-bold">
+                        ลำดับที่ {thaiNumbers[idx] || idx + 1}
+                      </div>
+                      {/* Role Badge */}
+                      <div className="absolute top-2.5 right-2.5">
+                        <span
+                          className={`inline-block px-2.5 py-0.5 rounded-md text-xs font-medium border shadow-xs backdrop-blur-xs ${m.badgeColor}`}
+                        >
+                          {m.roleBadge}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Name & Titles */}
+                    <div>
+                      <h4 className="font-bold text-stone-900 text-base font-serif group-hover:text-amber-900 transition-colors leading-snug">
+                        {m.name}
+                      </h4>
+                      <div className="text-xs font-semibold text-amber-800 mt-1">
+                        {m.position}
+                      </div>
+                      <div className="text-[11px] text-stone-500 mt-0.5">
+                        {m.office}
+                      </div>
+                    </div>
+
+                    {/* Qualifications & Expertise */}
+                    <div className="space-y-2.5 text-xs text-stone-600 border-t border-stone-100 pt-3">
+                      <div>
+                        <span className="font-bold text-stone-700 block text-[11px] uppercase tracking-wider text-amber-900/80">
+                          คุณวุฒิการศึกษา:
+                        </span>
+                        <p className="mt-0.5 leading-relaxed text-stone-700">{m.degree}</p>
+                      </div>
+                      <div>
+                        <span className="font-bold text-stone-700 block text-[11px] uppercase tracking-wider text-amber-900/80">
+                          สาขาความเชี่ยวชาญ:
+                        </span>
+                        <p className="mt-0.5 leading-relaxed text-stone-700">{m.expertise}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* External Profile Link Button */}
+                  <a
+                    href={m.profileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-1.5 w-full py-2.5 px-3 rounded-xl bg-stone-50 group-hover:bg-amber-50/80 text-stone-700 group-hover:text-amber-900 text-xs font-semibold border border-stone-200 group-hover:border-amber-300 transition-all mt-4"
+                  >
+                    <span>ข้อมูลประวัติบน fb.mcu.ac.th</span>
+                    <ExternalLink className="w-3.5 h-3.5 text-amber-800 shrink-0" />
+                  </a>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

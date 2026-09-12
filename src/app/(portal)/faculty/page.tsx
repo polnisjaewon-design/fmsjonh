@@ -39,8 +39,17 @@ export default async function FacultyPage() {
               className="bg-white rounded-2xl p-6 border border-amber-200/80 shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-4"
             >
               <div className="flex items-start gap-4">
-                <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center text-amber-900 font-bold shrink-0 text-xl border-2 border-amber-300">
-                  <UserCheck className="w-8 h-8 text-amber-800" />
+                <div className="w-16 h-16 rounded-full bg-amber-100 overflow-hidden flex items-center justify-center text-amber-900 font-bold shrink-0 text-xl border-2 border-amber-300">
+                  {member.avatarUrl ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      src={member.avatarUrl}
+                      alt={member.fullNameTh}
+                      className="w-full h-full object-cover object-top"
+                    />
+                  ) : (
+                    <UserCheck className="w-8 h-8 text-amber-800" />
+                  )}
                 </div>
                 <div className="space-y-1">
                   <h3 className="font-bold text-stone-900 text-base leading-snug">
@@ -78,8 +87,17 @@ export default async function FacultyPage() {
               key={member.id}
               className="bg-white rounded-2xl p-6 border border-stone-200 shadow-xs flex items-start gap-4 hover:shadow-md transition-all"
             >
-              <div className="w-16 h-16 rounded-full bg-stone-100 flex items-center justify-center text-stone-700 font-bold shrink-0 text-xl border">
-                <Users className="w-8 h-8 text-stone-600" />
+              <div className="w-16 h-16 rounded-full bg-stone-100 overflow-hidden flex items-center justify-center text-stone-700 font-bold shrink-0 text-xl border">
+                {member.avatarUrl ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={member.avatarUrl}
+                    alt={member.fullNameTh}
+                    className="w-full h-full object-cover object-top"
+                  />
+                ) : (
+                  <Users className="w-8 h-8 text-stone-600" />
+                )}
               </div>
               <div className="space-y-1.5 flex-1">
                 <h3 className="font-bold text-stone-900 text-lg leading-snug">
@@ -118,8 +136,17 @@ export default async function FacultyPage() {
                 className="bg-white rounded-2xl p-6 border border-stone-200 shadow-xs space-y-3"
               >
                 <div className="flex items-start gap-3.5">
-                  <div className="w-12 h-12 rounded-full bg-stone-100 flex items-center justify-center text-stone-700 font-bold shrink-0 border">
-                    <Users className="w-6 h-6 text-stone-600" />
+                  <div className="w-12 h-12 rounded-full bg-stone-100 overflow-hidden flex items-center justify-center text-stone-700 font-bold shrink-0 border">
+                    {member.avatarUrl ? (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img
+                        src={member.avatarUrl}
+                        alt={member.fullNameTh}
+                        className="w-full h-full object-cover object-top"
+                      />
+                    ) : (
+                      <Users className="w-6 h-6 text-stone-600" />
+                    )}
                   </div>
                   <div>
                     <h3 className="font-bold text-stone-900 text-base">{member.fullNameTh}</h3>
