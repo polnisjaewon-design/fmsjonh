@@ -6,8 +6,18 @@ import { env } from "@/shared/lib/infra/env";
 import { prisma } from "@/shared/lib/infra/prisma";
 import { P } from "../../permissions";
 import { requirePermission } from "../rbac";
-import { listUsersQuerySchema, createUserSchema, updateUserSchema, setUserActiveSchema, issuePasswordLinkSchema, requestEmailChangeSchema } from "../validations/users";
+import {
+  listUsersQuerySchema,
+  createUserSchema,
+  updateUserSchema,
+  setUserActiveSchema,
+  issuePasswordLinkSchema,
+  requestEmailChangeSchema,
+  exportUsersQuerySchema,
+  importUsersBatchSchema,
+} from "../validations/users";
 import * as svc from "../services/user.service";
+import * as csvSvc from "../services/user-csv.service";
 
 const em = async () => ({ error: zodErrorMap(await getLocale()) });
 
@@ -19,6 +29,26 @@ export async function listUsersAction(q: unknown): Promise<ActionResult<{ items:
   return runAction(async () => {
     const ctx = await requirePermission(P.usersRead);
     return svc.listUsers(ctx.tenantId, listUsersQuerySchema.parse(q, await em()));
+  });
+}
+
+export async function exportUsersCsvAction(q: unknown): Promise<ActionResult<{ csvContent: string; filename: string; count: number }>> {
+  return runAction(async () => {
+    const ctx = await requirePermission(P.usersRead);
+    return csvSvc.exportUsersToCsv(ctx.tenantId, exportUsersQuerySchema.parse(q, await em()));
+  });
+}
+
+export async function importUsersCsvAction(input: unknown): Promise<ActionResult<{
+  total: number;
+  successCount: number;
+  failedCount: number;
+  results: Array<{ email: string; name: string; success: boolean; error?: string }>;
+}>> {
+  return runAction(async () => {
+    const ctx = await requirePermission(P.usersManage);
+    const data = importUsersBatchSchema.parse(input, await em());
+    return csvSvc.importUsersBatch({ ...actorOf(ctx), ...data });
   });
 }
 
@@ -72,3 +102,4 @@ export async function requestEmailChangeAction(input: unknown): Promise<ActionRe
 export async function confirmEmailChangeAction(token: string): Promise<ActionResult<boolean>> {
   return runAction(() => svc.confirmEmailChange(token));
 }
+
