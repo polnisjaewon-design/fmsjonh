@@ -14,7 +14,9 @@ e2e/.auth/
 /public/uploads/
 .env.docker
 prisma/*.bundle.js
-prisma/backups/*_*.sql
+prisma/backups/*_[0-9]*.sql
+!prisma/backups/ums_prod_backup.sql
 dist/
+
 
 
